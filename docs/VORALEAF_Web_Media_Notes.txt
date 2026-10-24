@@ -1,0 +1,13 @@
+VORALEAF WEB EXPERIENCE MEDIA KIT
+24 October 2026
+
+Five original AI-generated editorial photographs: coffee hero, movement studio, couple terrace, strength studio, desk-side coffee. These are illustrative concept scenes, not live footage, customer testimonials or clinical evidence.
+
+The 24-second MP4 is an animated-still motion study, without recorded live action or audio. Use the separate live-action script for a future production shoot. No footage from the reference tutorial or uploaded competitor advertisements is reused.
+
+The blueprint includes the implementation matrix, production architecture, exact hero script, WebRTC roadmap and launch requirements. The current site has no payment integration or hosted live broadcast.
+
+The source is maintained with the privately deployed VORALEAF Site. This media kit contains documents and creative assets, rather than a second copy of that source repository.
+
+VORALEAF | hello@voraleaf.com | +44 7463 326519
+294 Coldharbour Lane, London, SW9 8SE, United Kingdom

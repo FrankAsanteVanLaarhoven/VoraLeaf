@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "tempoBpm": 80,
+  "tracks": [
+    {
+      "id": "golden-hour",
+      "title": "Golden Hour",
+      "description": "Warm acoustic-style arpeggios, soft struck-string notes and an easy country pulse.",
+      "src": "/assets/audio/golden-hour.mp3",
+      "durationSeconds": 36.0,
+      "format": "audio/mpeg",
+      "composition": "Original deterministic procedural instrumental",
+      "clinicalClaim": false
+    },
+    {
+      "id": "meadow",
+      "title": "Meadow",
+      "description": "Light fingerpicked-style strings, a gentle bass and spacious pastoral chords.",
+      "src": "/assets/audio/meadow.mp3",
+      "durationSeconds": 36.0,
+      "format": "audio/mpeg",
+      "composition": "Original deterministic procedural instrumental",
+      "clinicalClaim": false
+    },
+    {
+      "id": "quiet-roots",
+      "title": "Quiet Roots",
+      "description": "A slower-feeling arrangement of rounded plucks, warm pads and sparse melodic notes.",
+      "src": "/assets/audio/quiet-roots.mp3",
+      "durationSeconds": 36.0,
+      "format": "audio/mpeg",
+      "composition": "Original deterministic procedural instrumental",
+      "clinicalClaim": false
+    }
+  ],
+  "rights": "Original procedural compositions created for VORALEAF; no third-party samples or intentionally reproduced melodies. These are instrumental background tracks, not clinical therapy."
+}

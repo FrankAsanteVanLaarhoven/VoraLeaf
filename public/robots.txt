@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /
+# Private collection review. Replace only after final content and launch approval.

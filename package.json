@@ -1,0 +1,21 @@
+{
+  "name": "voraleaf",
+  "version": "0.3.1",
+  "private": true,
+  "description": "VORALEAF coffee collection, editorial journal and private creator studio",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/check.mjs && node --test tests/*.test.mjs && node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --dist",
+    "test": "node --test tests/*.test.mjs",
+    "build:worker": "node scripts/generate-db.mjs && node scripts/check.mjs && node --test tests/*.test.mjs && node scripts/build-worker.mjs && node scripts/validate-worker.mjs",
+    "dev:api": "node --env-file=.env scripts/serve.mjs",
+    "db:generate": "node scripts/generate-db.mjs"
+  }
+}
