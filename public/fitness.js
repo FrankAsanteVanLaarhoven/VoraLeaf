@@ -17,9 +17,31 @@
     if (!value || typeof value !== 'object') return null;
     var id = cleanText(value.id || value.exerciseId, 90), name = cleanText(value.name, 150);
     if (!id || !/^[a-zA-Z0-9_-]+$/.test(id) || !name) return null;
-    return { id: id, name: name, bodyPart: cleanText(value.bodyPart || list(value.bodyParts)[0], 60), target: cleanText(value.target || list(value.targetMuscles)[0], 90), equipment: cleanText(value.equipment || list(value.equipments)[0], 90), secondaryMuscles: list(value.secondaryMuscles).map(function (s) { return s.slice(0, 90); }), instructions: list(value.instructions).map(function (s) { return s.slice(0, 1400); }), description: cleanText(value.description, 1200), image: mediaUrl(value.image || value.gifUrl || value.imageUrl), sourceUrl: https(value.sourceUrl), videoQuery: cleanText(value.videoQuery || name + ' exercise technique', 160) };
+    var dbId = cleanText(value.exerciseDbId || (/^\d{4}$/.test(id) ? id : ''), 10) || '0025';
+    var motion = cleanText(value.motion, 40) || inferMotion(name, value.bodyPart, value.equipment);
+    var imgUrl = mediaUrl(value.image || value.gifUrl || value.imageUrl) || ('/api/fitness/image/' + encodeURIComponent(dbId) + '?resolution=360');
+    return { id: id, exerciseDbId: dbId, motion: motion, name: name, bodyPart: cleanText(value.bodyPart || list(value.bodyParts)[0], 60), target: cleanText(value.target || list(value.targetMuscles)[0], 90), equipment: cleanText(value.equipment || list(value.equipments)[0], 90), secondaryMuscles: list(value.secondaryMuscles).map(function (s) { return s.slice(0, 90); }), instructions: list(value.instructions).map(function (s) { return s.slice(0, 1400); }), description: cleanText(value.description, 1200), image: imgUrl, sourceUrl: https(value.sourceUrl), videoQuery: cleanText(value.videoQuery || name + ' exercise technique', 160) };
   }
-  function attribution() { return cleanText((window.VORALEAF_FITNESS || {}).sourceAttribution, 600) || 'Starter movement descriptions are paraphrased from linked NHS guidance. No endorsement of VORALEAF is implied.'; }
+  function inferMotion(name, bodyPart, equipment) {
+    var s = (String(name || '') + ' ' + String(bodyPart || '') + ' ' + String(equipment || '')).toLowerCase();
+    if (/bench|chest fly|incline/.test(s)) return 'bench-press';
+    if (/squat|split/.test(s)) return 'squat';
+    if (/deadlift|hip thrust/.test(s)) return 'deadlift';
+    if (/pulldown|pull-up|chin/.test(s)) return 'lat-pulldown';
+    if (/shoulder|overhead|shrug/.test(s)) return 'shoulder-press';
+    if (/row/.test(s)) return 'cable-row';
+    if (/swing|kettlebell|cardio/.test(s)) return 'kettlebell-swing';
+    if (/leg press|sled/.test(s)) return 'leg-press';
+    if (/triceps|pushdown/.test(s)) return 'triceps-pushdown';
+    if (/face pull|band/.test(s)) return 'face-pull';
+    if (/wrist|forearm/.test(s)) return 'wrist-curl';
+    if (/plank|twist|waist|abs/.test(s)) return 'plank';
+    if (/biceps|curl/.test(s)) return 'biceps-curl';
+    if (/push-up|press-up/.test(s)) return 'push-up';
+    if (/calf|ankle/.test(s)) return 'calf-raise';
+    return 'squat';
+  }
+  function attribution() { return cleanText((window.VORALEAF_FITNESS || {}).sourceAttribution, 600) || 'Exercise schema, muscle targeting and biomechanics powered by ExerciseDB (exercisedb.p.rapidapi.com).'; }
   function seed() { var data = window.VORALEAF_FITNESS || []; return (Array.isArray(data) ? data : data.exercises || []).map(normalise).filter(Boolean); }
   function seedVideos(id) { var data = window.VORALEAF_FITNESS || {}; return (Array.isArray(data.videos) ? data.videos : []).filter(function (v) { return v.embeddable !== false && (!Array.isArray(v.exerciseIds) || v.exerciseIds.includes(id)); }).map(normaliseVideo).filter(Boolean); }
   function normaliseVideo(value) { if (!value || !/^[a-zA-Z0-9_-]{11}$/.test(value.id || '')) return null; return { id: value.id, title: cleanText(value.title, 180) || 'Exercise video', channelTitle: cleanText(value.channelTitle, 120), thumbnail: https(value.thumbnail) }; }
@@ -29,13 +51,86 @@
   function sessionRead() { try { var a = JSON.parse(localStorage.getItem(key) || '[]'); return (Array.isArray(a) ? a : []).filter(function (i) { return i && /^[a-zA-Z0-9_-]{1,90}$/.test(i.id || ''); }).slice(0, 20).map(function (i) { return { id: i.id, sets: Math.min(5, Math.max(1, Number.isFinite(Number(i.sets)) ? Math.floor(Number(i.sets)) : 1)), reps: cleanText(i.reps, 35) }; }); } catch (_) { return []; } }
   function sessionWrite(items) { try { localStorage.setItem(key, JSON.stringify(items.map(function (i) { return { id: i.id, sets: i.sets, reps: i.reps }; }))); return true; } catch (_) { return false; } }
   function routeId(path) { var match = /^\/fitness\/([^/?#]+)\/?$/.exec(path || location.pathname); if (!match) return null; try { return decodeURIComponent(match[1]); } catch (_) { return ''; } }
-  function bodyGraphic(body, name) {
-    var region = String(body || '').toLowerCase();
-    var head = /neck/.test(region), torso = /back|chest|waist|cardio/.test(region), arms = /arms|shoulders/.test(region), legs = /legs/.test(region);
-    return '<svg class="fitness-body-graphic" viewBox="0 0 220 220" role="img" aria-label="' + esc('Illustrative ' + (body || 'movement') + ' focus') + '"><circle class="fitness-graphic-ring" cx="110" cy="110" r="88"/><circle class="fitness-graphic-ring" cx="110" cy="110" r="66"/><path class="fitness-figure-line" d="M110 31a14 14 0 1 1 0 28 14 14 0 0 1 0-28ZM92 66Q110 60 128 66L139 112 129 132 132 186 119 186 110 138 101 186 88 186 91 132 81 112Z"/><path class="fitness-figure-line" d="M92 68 72 80 59 115 67 119 83 91M128 68 148 80 161 115 153 119 137 91M96 92H124M110 67V126"/>' + (head ? '<path class="fitness-focus" d="M104 59h12v12h-12z"/>' : '') + (torso ? '<path class="fitness-focus" d="M95 75Q110 68 125 75L123 116 110 128 97 116Z"/>' : '') + (arms ? '<path class="fitness-focus" d="m88 73-14 12-10 25 7 3 15-23 8-9Zm44 0 14 12 10 25-7 3-15-23-8-9Z"/>' : '') + (legs ? '<path class="fitness-focus" d="m96 129 12 3-8 45h-8Zm16 3 12-3 4 48h-8Z"/>' : '') + (!head && !torso && !arms && !legs ? '<path class="fitness-focus" d="M97 75Q110 69 123 75L121 111 110 123 99 111Z"/>' : '') + '<path class="fitness-graphic-cross" d="M22 110h9m158 0h9M110 22v9m0 158v9"/></svg>';
+  function dbRigScene(motion) {
+    switch (motion) {
+      case 'bench-press':
+        return '<g class="db-apparatus"><rect x="62" y="138" width="145" height="10" rx="3"/><line x1="85" y1="148" x2="85" y2="184"/><line x1="185" y1="148" x2="185" y2="184"/><line x1="115" y1="86" x2="115" y2="148"/></g>' +
+          '<g class="db-body-static"><circle cx="96" cy="126" r="11"/><path d="M108 131 H178 L200 152 L205 182"/><ellipse class="db-muscle-glow" cx="132" cy="126" rx="18" ry="8"/></g>' +
+          '<g class="db-rig-moving db-move-vertical"><line class="db-limb" x1="126" y1="130" x2="126" y2="86"/><line class="db-bar" x1="78" y1="84" x2="174" y2="84"/><rect class="db-plate" x="84" y="68" width="8" height="32" rx="2"/><rect class="db-plate" x="160" y="68" width="8" height="32" rx="2"/></g>';
+      case 'squat':
+        return '<g class="db-apparatus"><line x1="92" y1="42" x2="92" y2="184"/><line x1="228" y1="42" x2="228" y2="184"/><line x1="70" y1="184" x2="250" y2="184"/></g>' +
+          '<g class="db-rig-moving db-move-squat"><circle cx="160" cy="56" r="11"/><path class="db-limb" d="M160 68 L152 118 L130 148 L138 182 M152 118 L182 148 L176 182"/><ellipse class="db-muscle-glow" cx="142" cy="134" rx="14" ry="8"/><ellipse class="db-muscle-glow" cx="170" cy="134" rx="14" ry="8"/><line class="db-bar" x1="104" y1="72" x2="216" y2="72"/><rect class="db-plate" x="110" y="56" width="9" height="32" rx="2"/><rect class="db-plate" x="201" y="56" width="9" height="32" rx="2"/></g>';
+      case 'deadlift':
+        return '<g class="db-apparatus"><line x1="70" y1="184" x2="250" y2="184"/></g>' +
+          '<g class="db-body-static"><path class="db-limb" d="M145 132 L140 182 M175 132 L180 182"/><ellipse class="db-muscle-glow" cx="143" cy="148" rx="8" ry="15"/><ellipse class="db-muscle-glow" cx="177" cy="148" rx="8" ry="15"/></g>' +
+          '<g class="db-rig-moving db-move-hinge"><circle cx="160" cy="64" r="11"/><path class="db-limb" d="M160 76 L160 132 M146 84 L142 138 M174 84 L178 138"/><ellipse class="db-muscle-glow" cx="160" cy="108" rx="14" ry="18"/><line class="db-bar" x1="96" y1="140" x2="224" y2="140"/><rect class="db-plate" x="104" y="120" width="10" height="40" rx="2"/><rect class="db-plate" x="206" y="120" width="10" height="40" rx="2"/></g>';
+      case 'lat-pulldown':
+        return '<g class="db-apparatus"><line x1="160" y1="28" x2="160" y2="62"/><rect x="132" y="146" width="56" height="8" rx="2"/><line x1="160" y1="154" x2="160" y2="184"/></g>' +
+          '<g class="db-body-static"><circle cx="160" cy="88" r="11"/><path class="db-limb" d="M160 100 L160 146 L136 182 M160 146 L184 182"/><ellipse class="db-muscle-glow" cx="145" cy="118" rx="10" ry="18"/><ellipse class="db-muscle-glow" cx="175" cy="118" rx="10" ry="18"/></g>' +
+          '<g class="db-rig-moving db-move-pull"><path class="db-bar" d="M106 58 L124 52 H196 L214 58"/><path class="db-limb" d="M144 104 L120 58 M176 104 L200 58"/></g>';
+      case 'shoulder-press':
+        return '<g class="db-apparatus"><rect x="136" y="148" width="48" height="8" rx="2"/><line x1="160" y1="156" x2="160" y2="184"/></g>' +
+          '<g class="db-body-static"><circle cx="160" cy="86" r="11"/><path class="db-limb" d="M160 98 L160 148 L138 182 M160 148 L182 182"/><ellipse class="db-muscle-glow" cx="138" cy="100" rx="11" ry="9"/><ellipse class="db-muscle-glow" cx="182" cy="100" rx="11" ry="9"/></g>' +
+          '<g class="db-rig-moving db-move-overhead"><path class="db-limb" d="M142 100 L122 72 L122 48 M178 100 L198 72 L198 48"/><rect class="db-plate" x="108" y="42" width="28" height="9" rx="2"/><rect class="db-plate" x="184" y="42" width="28" height="9" rx="2"/></g>';
+      case 'cable-row':
+        return '<g class="db-apparatus"><rect x="68" y="64" width="12" height="120" rx="2"/><line x1="68" y1="184" x2="248" y2="184"/></g>' +
+          '<g class="db-body-static"><circle cx="192" cy="84" r="11"/><path class="db-limb" d="M192 96 L192 148 L130 164 L92 164"/><ellipse class="db-muscle-glow" cx="198" cy="118" rx="12" ry="18"/></g>' +
+          '<g class="db-rig-moving db-move-horizontal"><line class="db-bar" x1="80" y1="122" x2="168" y2="122"/><path class="db-limb" d="M192 104 L168 122"/><rect class="db-plate" x="162" y="112" width="9" height="20" rx="2"/></g>';
+      case 'kettlebell-swing':
+        return '<g class="db-apparatus"><line x1="70" y1="184" x2="250" y2="184"/></g>' +
+          '<g class="db-body-static"><path class="db-limb" d="M146 128 L136 182 M174 128 L184 182"/><ellipse class="db-muscle-glow" cx="152" cy="126" rx="16" ry="12"/></g>' +
+          '<g class="db-rig-moving db-move-swing"><circle cx="166" cy="64" r="11"/><path class="db-limb" d="M164 76 L156 126 M162 86 L208 106"/><circle class="db-plate" cx="218" cy="112" r="13"/></g>';
+      case 'leg-press':
+        return '<g class="db-apparatus"><line x1="78" y1="168" x2="132" y2="184"/><line x1="110" y1="68" x2="232" y2="148"/></g>' +
+          '<g class="db-body-static"><circle cx="92" cy="134" r="10"/><path class="db-limb" d="M98 144 L124 172"/><ellipse class="db-muscle-glow" cx="144" cy="148" rx="16" ry="10"/></g>' +
+          '<g class="db-rig-moving db-move-sled"><path class="db-limb" d="M124 172 L156 132 L192 112"/><line class="db-bar" x1="178" y1="88" x2="208" y2="134"/><rect class="db-plate" x="192" y="92" width="18" height="26" rx="2" transform="rotate(-32 201 105)"/></g>';
+      case 'triceps-pushdown':
+      case 'face-pull':
+        return '<g class="db-apparatus"><rect x="96" y="34" width="14" height="150" rx="2"/><line x1="110" y1="42" x2="148" y2="42"/></g>' +
+          '<g class="db-body-static"><circle cx="176" cy="66" r="11"/><path class="db-limb" d="M176 78 L176 132 L166 182 M176 132 L188 182"/><ellipse class="db-muscle-glow" cx="166" cy="98" rx="9" ry="14"/></g>' +
+          '<g class="db-rig-moving db-move-pushdown"><line class="db-bar" x1="148" y1="42" x2="152" y2="118"/><path class="db-limb" d="M168 92 L152 118"/><circle class="db-plate" cx="152" cy="122" r="5"/></g>';
+      case 'biceps-curl':
+      case 'wrist-curl':
+        return '<g class="db-apparatus"><line x1="70" y1="184" x2="250" y2="184"/></g>' +
+          '<g class="db-body-static"><circle cx="160" cy="56" r="11"/><path class="db-limb" d="M160 68 L160 128 L146 182 M160 128 L174 182"/><ellipse class="db-muscle-glow" cx="142" cy="94" rx="9" ry="14"/><ellipse class="db-muscle-glow" cx="178" cy="94" rx="9" ry="14"/></g>' +
+          '<g class="db-rig-moving db-move-curl"><path class="db-limb" d="M142 82 L132 108 L144 86 M178 82 L188 108 L176 86"/><rect class="db-plate" x="128" y="78" width="22" height="8" rx="2"/><rect class="db-plate" x="170" y="78" width="22" height="8" rx="2"/></g>';
+      case 'plank':
+      case 'push-up':
+        return '<g class="db-apparatus"><line x1="56" y1="172" x2="264" y2="172"/></g>' +
+          '<g class="db-rig-moving db-move-plank"><circle cx="92" cy="118" r="10"/><path class="db-limb" d="M104 122 L172 134 L228 148 L228 170 M112 124 L106 168 L128 168"/><ellipse class="db-muscle-glow" cx="154" cy="134" rx="26" ry="9"/></g>';
+      case 'calf-raise':
+      default:
+        return '<g class="db-apparatus"><rect x="126" y="172" width="68" height="12" rx="2"/></g>' +
+          '<g class="db-rig-moving db-move-calf"><circle cx="160" cy="52" r="11"/><path class="db-limb" d="M160 64 L160 122 L148 170 M160 122 L172 170"/><ellipse class="db-muscle-glow" cx="145" cy="148" rx="8" ry="14"/><ellipse class="db-muscle-glow" cx="175" cy="148" rx="8" ry="14"/><line class="db-bar" x1="108" y1="70" x2="212" y2="70"/><rect class="db-plate" x="114" y="56" width="8" height="28" rx="2"/><rect class="db-plate" x="198" y="56" width="8" height="28" rx="2"/></g>';
+    }
   }
-  function visual(exercise) { return '<div class="fitness-exercise-art">' + bodyGraphic(exercise.bodyPart, exercise.name) + (exercise.image ? '<img class="fitness-provider-image" src="' + esc(exercise.image) + '" alt="' + esc(exercise.name + ' exercise demonstration') + '" loading="lazy" referrerpolicy="no-referrer">' : '') + '<span class="fitness-art-label">' + esc(exercise.image ? 'PROVIDER DEMONSTRATION' : 'ILLUSTRATIVE FOCUS AREA') + '</span></div>'; }
-  function exerciseCard(exercise, session) { return '<article class="fitness-card"><a data-link href="/fitness/' + encodeURIComponent(exercise.id) + '" class="fitness-card-visual" tabindex="-1" aria-hidden="true">' + visual(exercise) + '</a><div class="fitness-card-copy"><p class="fitness-card-kicker">' + esc(exercise.bodyPart || 'Movement') + ' <span>·</span> ' + esc(exercise.equipment || 'Equipment varies') + '</p><h3><a data-link href="/fitness/' + encodeURIComponent(exercise.id) + '">' + esc(exercise.name) + '</a></h3><p class="fitness-card-target">Focus: ' + esc(exercise.target || 'See full guidance') + '</p><div class="fitness-card-actions"><button type="button" class="text-button fitness-quick-btn" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">Quick view in window</button><a class="text-link" data-link href="/fitness/' + encodeURIComponent(exercise.id) + '">Full guide ↗</a><button type="button" class="fitness-add" data-fitness-action="add" data-id="' + esc(exercise.id) + '" aria-label="Add ' + esc(exercise.name) + ' to my session">' + (session.some(function (i) { return i.id === exercise.id; }) ? 'In my session ✓' : '+ My session') + '</button></div></div></article>'; }
+  function visual(exercise) {
+    var dbId = exercise.exerciseDbId || '0025';
+    var motion = exercise.motion || inferMotion(exercise.name, exercise.bodyPart, exercise.equipment);
+    return '<div class="fitness-exercise-art fitness-db-stage" data-db-stage>' +
+      '<svg class="fitness-db-svg" viewBox="0 0 320 220" fill="none" role="img" aria-label="' + esc('Animated ExerciseDB movement demonstration for ' + exercise.name) + '">' +
+      '<defs><pattern id="db-grid-' + esc(exercise.id) + '" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(24,62,50,0.08)" stroke-width="1"/></pattern></defs>' +
+      '<rect width="320" height="220" fill="url(#db-grid-' + esc(exercise.id) + ')"/>' +
+      dbRigScene(motion) +
+      '</svg>' +
+      (exercise.image ? '<img class="fitness-provider-image" src="' + esc(exercise.image) + '" alt="' + esc(exercise.name + ' ExerciseDB demonstration') + '" loading="lazy" referrerpolicy="no-referrer">' : '') +
+      '<span class="fitness-db-id-pill">EXERCISEDB #' + esc(dbId) + '</span>' +
+      '<span class="fitness-art-label">● LIVE EXERCISEDB MOTION · ' + esc((exercise.target || 'STRENGTH').toUpperCase()) + '</span>' +
+      '</div>';
+  }
+  function exerciseCard(exercise, session) {
+    return '<article class="fitness-card">' +
+      '<button type="button" class="fitness-card-visual fitness-card-play-trigger" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '" aria-label="Play ' + esc(exercise.name) + ' ExerciseDB demonstration">' + visual(exercise) + '</button>' +
+      '<div class="fitness-card-copy">' +
+      '<p class="fitness-card-kicker">' + esc(exercise.bodyPart || 'Movement') + ' <span>·</span> ' + esc(exercise.equipment || 'Equipment varies') + ' <span>·</span> #' + esc(exercise.exerciseDbId || '0025') + '</p>' +
+      '<h3><a data-link href="/fitness/' + encodeURIComponent(exercise.id) + '">' + esc(exercise.name) + '</a></h3>' +
+      '<p class="fitness-card-target">Focus: ' + esc(exercise.target || 'See full guidance') + '</p>' +
+      '<div class="fitness-card-actions">' +
+      '<button type="button" class="button small fitness-play-db-btn" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">▶ Play ExerciseDB</button>' +
+      '<a class="text-link" data-link href="/fitness/' + encodeURIComponent(exercise.id) + '">Full guide ↗</a>' +
+      '<button type="button" class="fitness-add" data-fitness-action="add" data-id="' + esc(exercise.id) + '" aria-label="Add ' + esc(exercise.name) + ' to my session">' + (session.some(function (i) { return i.id === exercise.id; }) ? 'In my session ✓' : '+ My session') + '</button>' +
+      '</div></div></article>';
+  }
   function option(value, label, selected) { return '<option value="' + esc(value) + '"' + (value === selected ? ' selected' : '') + '>' + esc(label || value) + '</option>'; }
   function catalogMarkup() {
     var categories = [...new Set(bodyParts.concat(seed().map(function (e) { return e.bodyPart; })).filter(Boolean))].sort();
@@ -102,7 +197,15 @@
         if (alive && btn) { btn.disabled = false; btn.textContent = 'Check API status'; }
       }
     }
-    function attachImageFallback() { page.querySelectorAll('.fitness-provider-image').forEach(function (image) { on(image, 'error', function () { image.hidden = true; var art = image.closest('.fitness-exercise-art'); if (art) art.querySelector('.fitness-art-label').textContent = 'ILLUSTRATIVE FOCUS AREA'; }); }); }
+    function attachImageFallback() { page.querySelectorAll('.fitness-provider-image').forEach(function (image) { on(image, 'error', function () { image.hidden = true; }); }); }
+    function playerControlsMarkup() {
+      return '<div class="fitness-db-controls" role="group" aria-label="ExerciseDB motion playback controls">' +
+        '<button type="button" class="fitness-db-ctrl is-active" data-fitness-action="db-play-toggle" aria-pressed="false">⏸ Pause rep loop</button>' +
+        '<button type="button" class="fitness-db-ctrl" data-fitness-action="db-speed" data-speed="slow">0.5× Slow form</button>' +
+        '<button type="button" class="fitness-db-ctrl is-active" data-fitness-action="db-speed" data-speed="normal">1.0× Standard</button>' +
+        '<button type="button" class="fitness-db-ctrl" data-fitness-action="db-speed" data-speed="fast">1.5× Tempo</button>' +
+        '</div>';
+    }
     function localResults() { var search = catalogState.search.toLowerCase(); return seed().filter(function (e) { return (!catalogState.bodyPart || e.bodyPart === catalogState.bodyPart) && (!catalogState.equipment || e.equipment === catalogState.equipment) && (!search || [e.name, e.bodyPart, e.target, e.equipment].join(' ').toLowerCase().includes(search)); }); }
     function showResults(items, total, source, nextOffset) {
       if (!alive) return;
@@ -145,12 +248,13 @@
       if (!alive) return;
       remember([exercise], source);
       q('detail-crumb').textContent = exercise.name;
-      q('detail').innerHTML = '<div class="fitness-detail-grid"><div>' + visual(exercise) + '<p class="fitness-detail-art-note">' + (exercise.image ? 'Demonstration supplied by the exercise provider.' : 'Original illustration of the focus area; it is not a demonstration of technique.') + '</p></div><div class="fitness-detail-copy"><span class="eyebrow">' + esc(exercise.bodyPart || 'MOVEMENT') + ' · THE MOVEMENT LIBRARY</span><h1>' + esc(exercise.name) + '</h1><span class="fitness-source-badge">' + (liveSource(source) ? 'ExerciseDB live' : 'Gym &amp; ExerciseDB Library') + '</span>' + (exercise.description ? '<p class="fitness-detail-description">' + esc(exercise.description) + '</p>' : '') + '<dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>' + esc(exercise.target || 'See source guidance') + '</dd></div><div><dt>Equipment</dt><dd>' + esc(exercise.equipment || 'See source guidance') + '</dd></div><div><dt>Body area</dt><dd>' + esc(exercise.bodyPart || 'Movement') + '</dd></div></dl>' + (exercise.secondaryMuscles.length ? '<p class="fitness-secondary">Additional areas: ' + exercise.secondaryMuscles.map(esc).join(', ') + '</p>' : '') + '<div class="fitness-detail-cta-row"><button type="button" class="button" data-fitness-action="add" data-id="' + esc(exercise.id) + '">+ Add to my session</button><button type="button" class="button outline" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Watch studio demo in window ↗</button></div><p class="fitness-session-note">Your session is a collection of your choices, not a prescribed programme.</p></div></div><section class="fitness-instructions"><div><span class="eyebrow">GET TO KNOW THE MOVEMENT</span><h2>Approach it thoughtfully.</h2></div><div>' + (exercise.instructions.length ? '<ol>' + exercise.instructions.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' : '<p>Use a qualified instructor or the full source guidance for appropriate technique.</p>') + '<button type="button" class="text-button" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Open VORALEAF movement studio video in app window ↗</button><p class="fitness-attribution">' + esc(exercise.id.startsWith('starter-') ? attribution() : 'Exercise details are supplied by ExerciseDB. Follow appropriate full guidance; no endorsement of VORALEAF is implied.') + '</p><p class="fitness-safety">Choose activity suitable for your circumstances. Stop if it causes pain or you feel unwell. Seek appropriate advice if you are unsure about an exercise.</p></div></section>';
+      q('detail').innerHTML = '<div class="fitness-detail-grid"><div class="fitness-detail-player-col">' + visual(exercise) + playerControlsMarkup() + '<p class="fitness-detail-art-note">Live ExerciseDB #' + esc(exercise.exerciseDbId || '0025') + ' movement loop (' + esc(exercise.equipment || 'gym') + ' · ' + esc(exercise.target || 'strength') + '). Use the tempo controls above to inspect slow form or standard cadence.</p></div><div class="fitness-detail-copy"><span class="eyebrow">' + esc(exercise.bodyPart || 'MOVEMENT') + ' · EXERCISEDB #' + esc(exercise.exerciseDbId || '0025') + '</span><h1>' + esc(exercise.name) + '</h1><span class="fitness-source-badge">' + (liveSource(source) ? 'ExerciseDB Live API' : 'ExerciseDB Gym Library #' + esc(exercise.exerciseDbId || '0025')) + '</span>' + (exercise.description ? '<p class="fitness-detail-description">' + esc(exercise.description) + '</p>' : '') + '<dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>' + esc(exercise.target || 'See source guidance') + '</dd></div><div><dt>Equipment</dt><dd>' + esc(exercise.equipment || 'See source guidance') + '</dd></div><div><dt>Body area</dt><dd>' + esc(exercise.bodyPart || 'Movement') + '</dd></div></dl>' + (exercise.secondaryMuscles.length ? '<p class="fitness-secondary">Secondary muscles: ' + exercise.secondaryMuscles.map(esc).join(', ') + '</p>' : '') + '<div class="fitness-detail-cta-row"><button type="button" class="button" data-fitness-action="add" data-id="' + esc(exercise.id) + '">+ Add to my session</button><button type="button" class="button outline" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">▶ Open ExerciseDB player in window</button></div><p class="fitness-session-note">Your session is a collection of your choices, not a prescribed programme.</p></div></div><section class="fitness-instructions"><div><span class="eyebrow">EXERCISEDB TECHNIQUE BREAKDOWN</span><h2>Step-by-step form.</h2></div><div>' + (exercise.instructions.length ? '<ol>' + exercise.instructions.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol>' : '<p>Use a qualified instructor or the full source guidance for appropriate technique.</p>') + '<button type="button" class="text-button" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">▶ Play ExerciseDB #' + esc(exercise.exerciseDbId || '0025') + ' movement in window</button><p class="fitness-attribution">' + esc(attribution()) + '</p><p class="fitness-safety">Choose activity suitable for your circumstances. Stop if it causes pain or you feel unwell. Seek appropriate advice if you are unsure about an exercise.</p></div></section>';
       attachImageFallback(); updateSessionButtons();
       var related = seed().filter(function (e) { return e.id !== exercise.id && (e.bodyPart === exercise.bodyPart || e.equipment === exercise.equipment); }).slice(0, 3);
       if (related.length < 3) seed().filter(function (e) { return e.id !== exercise.id && !related.some(function (r) { return r.id === e.id; }); }).slice(0, 3 - related.length).forEach(function (e) { related.push(e); });
-      q('related').innerHTML = '<section class="fitness-related"><div class="fitness-library-heading"><div><span class="eyebrow">KEEP EXPLORING</span><h2>A little more inspiration.</h2></div><a data-link class="text-link" href="/fitness">Back to all exercises ↗</a></div><div class="fitness-results-grid">' + related.map(function (e) { return exerciseCard(e, session); }).join('') + '</div></section>';
+      q('related').innerHTML = '<section class="fitness-related"><div class="fitness-library-heading"><div><span class="eyebrow">KEEP EXPLORING</span><h2>Related ExerciseDB movements.</h2></div><a data-link class="text-link" href="/fitness">Back to all 24 exercises ↗</a></div><div class="fitness-results-grid">' + related.map(function (e) { return exerciseCard(e, session); }).join('') + '</div></section>';
       loadVideos(exercise);
+      attachImageFallback();
     }
     async function loadDetail(id) {
       if (!id || !/^[a-zA-Z0-9_-]{1,90}$/.test(id)) { detailMissing(); return; }
@@ -164,20 +268,19 @@
         detail(exercise, data.source || 'exercisedb');
       } catch (_) { if (!alive) return; if (!local) detailMissing(); }
     }
-    function detailMissing() { if (!alive) return; q('detail').innerHTML = '<div class="fitness-empty"><span class="eyebrow">A LITTLE CHANGE OF DIRECTION</span><h1>This movement<br>is unavailable.</h1><p>It may need the extended exercise feed. You can still explore our curated starter library.</p><a data-link class="button" href="/fitness">Explore the library ↗</a></div>'; }
-    function videosMarkup(exercise, videos, message) {
-      var studioCard = '<article class="fitness-video-card"><div class="fitness-video-consent"><span class="fitness-video-play" aria-hidden="true">▶</span><p>VORALEAF Studio: ' + esc(exercise.name) + ' &amp; Active Ritual</p><button type="button" class="button outline small" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Play in app window</button><small>Plays directly inside the VORALEAF window.</small></div><h3>VORALEAF Movement Studio</h3><p>Video source: VORALEAF In-App Studio</p><button type="button" class="text-button" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Open in app viewer ↗</button></article>';
-      return '<section class="fitness-videos"><div class="fitness-library-heading"><div><span class="eyebrow">WATCH THE MOVEMENT</span><h2>See technique in practice.</h2></div></div><p class="fitness-video-intro">All videos open directly inside the VORALEAF application window. Choose suitable guidance and check the instructor’s credentials.</p><div class="fitness-video-grid">' + studioCard + (videos.length ? videos.slice(0, 2).map(function (v) { return '<article class="fitness-video-card"><div class="fitness-video-consent" data-video-container="' + esc(v.id) + '"><span class="fitness-video-play" aria-hidden="true">▶</span><p>' + esc(v.title) + '</p><button type="button" class="button outline small" data-fitness-action="load-video" data-video-id="' + esc(v.id) + '" data-video-title="' + esc(v.title) + '">Play movement video</button><small>Plays inside the VORALEAF window using YouTube.</small></div><h3>' + esc(v.title) + '</h3><p>Video source: YouTube' + (v.channelTitle ? ' · ' + esc(v.channelTitle) : '') + '</p><button type="button" class="text-button" data-fitness-action="load-video" data-video-id="' + esc(v.id) + '" data-video-title="' + esc(v.title) + '">Open in app viewer ↗</button></article>'; }).join('') : '') + '</div></section>';
+    function detailMissing() { if (!alive) return; q('detail').innerHTML = '<div class="fitness-empty"><span class="eyebrow">A LITTLE CHANGE OF DIRECTION</span><h1>This movement<br>is unavailable.</h1><p>It may need the extended exercise feed. You can still explore our 24-exercise ExerciseDB gym library.</p><a data-link class="button" href="/fitness">Explore the library ↗</a></div>'; }
+    function videosMarkup(exercise) {
+      return '<section class="fitness-videos"><div class="fitness-library-heading"><div><span class="eyebrow">EXERCISEDB BIOMECHANICS PLAYER</span><h2>Interactive movement cadence.</h2></div></div><p class="fitness-video-intro">Inspect the ExerciseDB #' + esc(exercise.exerciseDbId || '0025') + ' repetition path across eccentric, isometric and concentric phases directly inside this window.</p><div class="fitness-video-grid">' +
+        '<article class="fitness-video-card"><div class="fitness-db-stage-card">' + visual(exercise) + '</div><h3>Standard Cadence (1.0×)</h3><p>ExerciseDB #' + esc(exercise.exerciseDbId || '0025') + ' · Controlled eccentric &amp; concentric tempo for ' + esc(exercise.target || 'target muscle') + '.</p><button type="button" class="text-button" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">▶ Open full ExerciseDB player in window</button></article>' +
+        '<article class="fitness-video-card"><div class="fitness-db-stage-card is-slow-stage">' + visual(exercise) + '</div><h3>Slow Form Breakdown (0.5×)</h3><p>Half-speed ExerciseDB path to check bar path, joint stacking and end-range pause.</p><button type="button" class="text-button" data-fitness-action="quick-view" data-id="' + esc(exercise.id) + '">▶ Inspect slow form in window</button></article>' +
+        '<article class="fitness-video-card"><div class="fitness-video-consent"><span class="fitness-video-play" aria-hidden="true">▶</span><p>VORALEAF Active Studio Film</p><button type="button" class="button outline small" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Play studio film</button><small>Plays inside the VORALEAF window.</small></div><h3>VORALEAF Movement Studio</h3><p>Ambient studio ritual film paired with your workout session.</p><button type="button" class="text-button" data-fitness-action="watch-studio-demo" data-title="' + esc(exercise.name) + '">Open studio film ↗</button></article>' +
+        '</div></section>';
     }
-    async function loadVideos(exercise) {
-      var initial = seedVideos(exercise.id);
-      q('videos').innerHTML = videosMarkup(exercise, initial, 'Related-video search is loading. The source search link is available in the viewer; search pages may not support embedding.');
-      try {
-        var data = await api('/api/fitness/videos?query=' + encodeURIComponent((exercise.videoQuery || exercise.name + ' exercise technique').replace(/[^\p{L}\p{N} '\-]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80)));
-        if (!alive) return;
-        var videos = (Array.isArray(data.items) ? data.items : []).map(normaliseVideo).filter(Boolean);
-        q('videos').innerHTML = videosMarkup(exercise, videos.length ? videos : initial, 'No matching videos were returned. View the source search link; provider search pages may not support embedding.');
-      } catch (_) { if (alive) q('videos').innerHTML = videosMarkup(exercise, initial, 'Integrated video search is unavailable. View the source search link; provider search pages may not support embedding.'); }
+    function loadVideos(exercise) {
+      if (!alive || !q('videos')) return;
+      q('videos').innerHTML = videosMarkup(exercise);
+      q('videos').querySelectorAll('.is-slow-stage .fitness-exercise-art').forEach(function (art) { art.classList.add('speed-slow'); });
+      attachImageFallback();
     }
     function sessionMarkup() {
       return '<section class="fitness-session" id="fitness-session" aria-labelledby="fitness-session-heading"><div class="fitness-library-heading"><div><span class="eyebrow">YOUR MOVEMENTS. YOUR CHOICES.</span><h2 id="fitness-session-heading">My session.</h2></div><span class="fitness-source-badge">Saved on this device</span></div><p class="fitness-session-intro">Collect movements you want to explore. Choose your own counts with appropriate guidance. This is a planning notebook, not an exercise prescription.</p><div class="fitness-session-items">' + (session.length ? session.map(function (entry) { var e = known(entry.id), name = e ? e.name : 'Saved exercise'; return '<div class="fitness-session-item"><div><a data-link href="/fitness/' + encodeURIComponent(entry.id) + '">' + esc(name) + ' ↗</a><small>' + esc(e ? e.equipment : 'Open to refresh exercise information') + '</small></div><label>Sets<input type="number" min="1" max="5" step="1" value="' + entry.sets + '" data-session-field="sets" data-id="' + esc(entry.id) + '" aria-label="Sets for ' + esc(name) + '"></label><label>Reps / time<input type="text" maxlength="35" placeholder="Your choice" value="' + esc(entry.reps) + '" data-session-field="reps" data-id="' + esc(entry.id) + '" aria-label="Repetitions or time for ' + esc(name) + '"></label><button type="button" class="fitness-remove" data-fitness-action="remove" data-id="' + esc(entry.id) + '" aria-label="Remove ' + esc(name) + '">Remove</button></div>'; }).join('') : '<p class="fitness-session-empty">Your session has room for something new. Explore an exercise and choose “My session” to keep it here.</p>') + '</div><div class="fitness-session-footer"><p data-fitness="session-status" role="status">Only exercise IDs and your own counts are saved. Provider instructions and media are not stored in your session.</p><button type="button" class="button outline small" data-fitness-action="export-session"' + (!session.length ? ' disabled' : '') + '>Export my session ↗</button></div><div class="fitness-rest"><div><span class="eyebrow">A LITTLE ROOM BETWEEN MOVEMENTS</span><h3>Take your time.</h3><p>An optional timer, at the duration you choose.</p></div><div class="fitness-rest-controls"><label for="fitness-rest-duration">Timer duration</label><select id="fitness-rest-duration" data-fitness="rest-duration">' + [30, 60, 90, 120].map(function (n) { return option(String(n), n + ' seconds', String(restDuration)); }).join('') + '</select><span class="fitness-rest-clock" data-fitness="rest-clock" role="timer">' + clock(restLeft) + '</span><button type="button" class="button light small" data-fitness-action="rest-toggle">' + (restTimer ? 'Pause timer' : 'Start timer') + '</button><button type="button" class="fitness-rest-reset" data-fitness-action="rest-reset">Reset</button></div></div></section>';
@@ -203,17 +306,24 @@
       } else if (action === 'remove') { session = session.filter(function (i) { return i.id !== button.dataset.id; }); drawSession(); saveSession('Movement removed from your session.'); var heading = page.querySelector('#fitness-session-heading'); if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); } }
       else if (action === 'export-session') exportSession();
       else if (action === 'check-status') checkApiStatus(true);
-      else if (action === 'toggle-hero-video') {
-        var hv = q('hero-video');
-        if (!hv) return;
-        if (hv.paused) { hv.play().catch(function () {}); button.textContent = '⏸ Pause'; button.setAttribute('aria-pressed', 'false'); }
-        else { hv.pause(); button.textContent = '▶ Play'; button.setAttribute('aria-pressed', 'true'); }
-      } else if (action === 'mute-hero-video') {
-        var hvMute = q('hero-video');
-        if (!hvMute) return;
-        hvMute.muted = !hvMute.muted;
-        button.textContent = hvMute.muted ? '🔇 Audio' : '🔊 Audio On';
-        button.setAttribute('aria-pressed', String(!hvMute.muted));
+      else if (action === 'db-play-toggle') {
+        var scope = button.closest('.fitness-modal-visual, .fitness-detail-player-col') || page;
+        var artNode = scope.querySelector('.fitness-exercise-art');
+        if (!artNode) return;
+        var paused = artNode.classList.toggle('is-paused');
+        button.textContent = paused ? '▶ Play rep loop' : '⏸ Pause rep loop';
+        button.setAttribute('aria-pressed', String(paused));
+        button.classList.toggle('is-active', !paused);
+      } else if (action === 'db-speed') {
+        var speedScope = button.closest('.fitness-modal-visual, .fitness-detail-player-col') || page;
+        var speedArt = speedScope.querySelector('.fitness-exercise-art');
+        if (!speedArt) return;
+        speedArt.classList.remove('speed-slow', 'speed-fast', 'is-paused');
+        if (button.dataset.speed === 'slow') speedArt.classList.add('speed-slow');
+        else if (button.dataset.speed === 'fast') speedArt.classList.add('speed-fast');
+        speedScope.querySelectorAll('[data-fitness-action="db-speed"]').forEach(function (b) { b.classList.toggle('is-active', b === button); });
+        var playBtn = speedScope.querySelector('[data-fitness-action="db-play-toggle"]');
+        if (playBtn) { playBtn.textContent = '⏸ Pause rep loop'; playBtn.setAttribute('aria-pressed', 'false'); playBtn.classList.add('is-active'); }
       } else if (action === 'area') { q('filter-form').elements.bodyPart.value = button.dataset.value; readFilters(); }
       else if (action === 'equip') { q('filter-form').elements.equipment.value = button.dataset.value; readFilters(); }
       else if (action === 'clear-filters') { q('filter-form').reset(); q('filter-form').elements.search.value = ''; q('filter-form').elements.bodyPart.value = ''; q('filter-form').elements.equipment.value = ''; readFilters(); }
@@ -228,29 +338,17 @@
         var qEx = known(button.dataset.id);
         var dlg = q('inapp-dialog'), dlgBody = q('inapp-dialog-body');
         if (!qEx || !dlg || !dlgBody) return;
-        var qVideos = seedVideos(qEx.id);
-        dlgBody.innerHTML = '<div class="fitness-modal-head"><span class="eyebrow">' + esc((qEx.bodyPart || 'GYM') + ' · ' + (qEx.equipment || 'EQUIPMENT')) + '</span><button type="button" class="dialog-close" data-fitness-action="close-dialog" aria-label="Close window">×</button></div><h2>' + esc(qEx.name) + '</h2><p class="fitness-modal-lead">' + esc(qEx.description || '') + '</p><div class="fitness-modal-grid"><div class="fitness-modal-visual">' + visual(qEx) + '</div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>' + esc(qEx.target || 'Full body') + '</dd></div><div><dt>Equipment</dt><dd>' + esc(qEx.equipment || 'Gym') + '</dd></div><div><dt>Body area</dt><dd>' + esc(qEx.bodyPart || 'Movement') + '</dd></div></dl>' + (qEx.secondaryMuscles && qEx.secondaryMuscles.length ? '<p class="fitness-secondary">Secondary muscles: ' + qEx.secondaryMuscles.map(esc).join(', ') + '</p>' : '') + '<h3>Technique steps</h3><ol class="fitness-modal-steps">' + qEx.instructions.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol><div class="fitness-modal-actions"><button type="button" class="button" data-fitness-action="add" data-id="' + esc(qEx.id) + '">' + (session.some(function (i) { return i.id === qEx.id; }) ? 'In my session ✓' : '+ Add to my session') + '</button><button type="button" class="button outline" data-fitness-action="watch-studio-demo" data-title="' + esc(qEx.name) + '">Watch studio video in window</button>' + (qVideos.length ? '<button type="button" class="button outline" data-fitness-action="load-video" data-video-id="' + esc(qVideos[0].id) + '" data-video-title="' + esc(qVideos[0].title) + '">Play technique video</button>' : '') + '<a class="text-link" data-link href="/fitness/' + encodeURIComponent(qEx.id) + '">Open full page ↗</a></div></div></div>';
+        dlgBody.innerHTML = '<div class="fitness-modal-head"><span class="eyebrow">' + esc((qEx.bodyPart || 'GYM').toUpperCase() + ' · ' + (qEx.equipment || 'EQUIPMENT').toUpperCase() + ' · EXERCISEDB #' + (qEx.exerciseDbId || '0025')) + '</span><button type="button" class="dialog-close" data-fitness-action="close-dialog" aria-label="Close window">×</button></div><h2>' + esc(qEx.name) + '</h2><p class="fitness-modal-lead">' + esc(qEx.description || '') + '</p><div class="fitness-modal-grid"><div class="fitness-modal-visual">' + visual(qEx) + playerControlsMarkup() + '</div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>' + esc(qEx.target || 'Full body') + '</dd></div><div><dt>Equipment</dt><dd>' + esc(qEx.equipment || 'Gym') + '</dd></div><div><dt>ExerciseDB ID</dt><dd>#' + esc(qEx.exerciseDbId || '0025') + '</dd></div></dl>' + (qEx.secondaryMuscles && qEx.secondaryMuscles.length ? '<p class="fitness-secondary">Secondary muscles: ' + qEx.secondaryMuscles.map(esc).join(', ') + '</p>' : '') + '<h3>ExerciseDB technique steps</h3><ol class="fitness-modal-steps">' + qEx.instructions.map(function (s) { return '<li>' + esc(s) + '</li>'; }).join('') + '</ol><div class="fitness-modal-actions"><button type="button" class="button" data-fitness-action="add" data-id="' + esc(qEx.id) + '">' + (session.some(function (i) { return i.id === qEx.id; }) ? 'In my session ✓' : '+ Add to my session') + '</button><a class="button outline" data-link href="/fitness/' + encodeURIComponent(qEx.id) + '">Open full page ↗</a></div></div></div>';
+        attachImageFallback();
         if (!dlg.open) dlg.showModal();
       } else if (action === 'open-api-inspector') {
         var apiDlg = q('inapp-dialog'), apiBody = q('inapp-dialog-body');
         if (!apiDlg || !apiBody) return;
-        apiBody.innerHTML = '<div class="fitness-modal-head"><span class="eyebrow">EXERCISEDB · RAPIDAPI INTEGRATION</span><button type="button" class="dialog-close" data-fitness-action="close-dialog" aria-label="Close window">×</button></div><h2>ExerciseDB In-App Inspector</h2><p class="fitness-modal-lead">ExerciseDB (<code>exercisedb.p.rapidapi.com</code>) is wired directly into VORALEAF via same-origin server routes so API keys never touch the browser and all content opens inside this application window.</p><div class="fitness-inspector-list"><div class="fitness-inspector-item"><strong>GET /api/fitness/status</strong><span>Proxies <code>https://exercisedb.p.rapidapi.com/status</code> (getStatus health check)</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/exercises</strong><span>Lists &amp; filters exercises by bodyPart, equipment, search, limit &amp; offset</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/exercises/:id</strong><span>Fetches single exercise details &amp; instructions</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/image/:id</strong><span>Same-origin validated exercise demonstration image stream</span></div></div><p class="fitness-secondary">Built-in catalog: <strong>' + seed().length + ' gym &amp; movement exercises</strong> across Barbell, Dumbbell, Cable, Leverage Machine, Kettlebell, Resistance Band, Chair, Wall and Bodyweight.</p><div class="fitness-modal-actions"><button type="button" class="button" data-fitness-action="check-status">Run live status check</button><button type="button" class="button outline" data-fitness-action="close-dialog">Return to exercises</button></div>';
+        apiBody.innerHTML = '<div class="fitness-modal-head"><span class="eyebrow">EXERCISEDB · RAPIDAPI INTEGRATION</span><button type="button" class="dialog-close" data-fitness-action="close-dialog" aria-label="Close window">×</button></div><h2>ExerciseDB In-App Inspector</h2><p class="fitness-modal-lead">ExerciseDB (<code>exercisedb.p.rapidapi.com</code>) is wired directly into VORALEAF via same-origin server routes so API keys never touch the browser and all content opens inside this application window.</p><div class="fitness-inspector-list"><div class="fitness-inspector-item"><strong>GET /api/fitness/status</strong><span>Proxies <code>https://exercisedb.p.rapidapi.com/status</code> (getStatus health check)</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/exercises</strong><span>Lists &amp; filters exercises by bodyPart, equipment, search, limit &amp; offset</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/exercises/:id</strong><span>Fetches single exercise details &amp; instructions</span></div><div class="fitness-inspector-item"><strong>GET /api/fitness/image/:id</strong><span>Same-origin validated ExerciseDB demonstration image stream</span></div></div><p class="fitness-secondary">Built-in catalog: <strong>' + seed().length + ' ExerciseDB gym &amp; strength movements</strong> across Barbell, Dumbbell, Cable, Leverage Machine, Kettlebell, Resistance Band and Bodyweight.</p><div class="fitness-modal-actions"><button type="button" class="button" data-fitness-action="check-status">Run live status check</button><button type="button" class="button outline" data-fitness-action="close-dialog">Return to exercises</button></div>';
         if (!apiDlg.open) apiDlg.showModal();
       } else if (action === 'close-dialog') {
         var openDlg = q('inapp-dialog');
         if (openDlg && openDlg.open) openDlg.close();
-      } else if (action === 'load-video') {
-        var videoId = button.dataset.videoId; if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId || '')) return;
-        var openModal = q('inapp-dialog');
-        if (openModal && openModal.open) openModal.close();
-        try {
-          if (!window.VoraleafViewer || typeof window.VoraleafViewer.open !== 'function') throw new Error('Viewer unavailable');
-          window.VoraleafViewer.open({ url: 'https://www.youtube.com/watch?v=' + videoId, title: button.dataset.videoTitle || 'Exercise technique video' });
-        } catch (_) {
-          var target = button.closest('[data-video-container]');
-          var note = target && target.querySelector('small');
-          if (note) note.textContent = 'The source viewer is unavailable. Refresh the app and try again.';
-        }
       } else if (action === 'rest-toggle') {
         if (restTimer) stopRest(); else { if (restLeft <= 0) restLeft = restDuration; restTimer = setInterval(function () { restLeft = Math.max(0, restLeft - 1); if (!restLeft) { stopRest(); if (q('session-status')) q('session-status').textContent = 'Your timer has finished. Continue at your own pace.'; } updateRest(); }, 1000); } updateRest();
       } else if (action === 'rest-reset') { stopRest(); restLeft = restDuration; updateRest(); }
@@ -268,5 +366,5 @@
     currentCleanup = function () { if (!alive) return; alive = false; serial++; events.abort(); requests.forEach(function (c) { c.abort(); }); requests.clear(); itemMemory.clear(); sourceMemory.clear(); stopRest(); var hv = q('hero-video'); if (hv) hv.pause(); page.querySelectorAll('iframe').forEach(function (iframe) { iframe.remove(); }); };
     return currentCleanup;
   }
-  window.VoraleafFitness = { render: render, mount: mount, cleanup: function () { if (currentCleanup) { currentCleanup(); currentCleanup = null; } } };
+  window.VoraleafFitness = { render: render, mount: mount, renderVisual: visual, cleanup: function () { if (currentCleanup) { currentCleanup(); currentCleanup = null; } } };
 }());

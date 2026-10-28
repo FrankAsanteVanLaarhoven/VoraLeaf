@@ -100,8 +100,8 @@ try {
   verify(Array.isArray(fitness?.exercises) && fitness.exercises.length >= 12, 'Missing curated movement library.');
   const fitnessIds = fitness.exercises.map(e=>e.id);
   verify(new Set(fitnessIds).size === fitnessIds.length, 'Duplicate exercise ID.');
-  for(const e of fitness.exercises){verify(/^starter-[a-z0-9-]+$/.test(e.id), 'Invalid starter ID.');verify(Array.isArray(e.instructions)&&e.instructions.length>0,'Missing movement guidance.');verify(new URL(e.sourceUrl).hostname==='www.nhs.uk','Starter source must be NHS.');}
-  for(const v of fitness.videos){verify(/^[A-Za-z0-9_-]{11}$/.test(v.id),'Invalid curated YouTube ID.');verify(v.exerciseIds.every(id=>fitnessIds.includes(id)),'Invalid video/exercise mapping.');}
+  for(const e of fitness.exercises){verify(/^starter-[a-z0-9-]+$/.test(e.id), 'Invalid starter ID.');verify(typeof e.exerciseDbId==='string'&&/^\d{4}$/.test(e.exerciseDbId),'Missing 4-digit ExerciseDB ID.');verify(Array.isArray(e.instructions)&&e.instructions.length>0,'Missing movement guidance.');verify(['rapidapi.com','exercisedb.p.rapidapi.com','www.nhs.uk'].includes(new URL(e.sourceUrl).hostname),'Invalid exercise source hostname.');}
+  for(const v of (fitness.videos||[])){verify(/^[A-Za-z0-9_-]{11}$/.test(v.id),'Invalid curated YouTube ID.');verify(v.exerciseIds.every(id=>fitnessIds.includes(id)),'Invalid video/exercise mapping.');}
   const baseRoutes = ['fitness', 'collection', 'intimate', 'journal', 'movement', 'studio', 'bag', 'contact', 'about', 'privacy'];
   const routes = [...baseRoutes, ...productIds.map(id => `products/${id}`), ...articleIds.map(id => `journal/${id}`), ...fitnessIds.map(id=>`fitness/${id}`)];
   verify(routes.length === 19 + fitnessIds.length, 'Unexpected route inventory.');

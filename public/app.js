@@ -240,15 +240,17 @@ function workoutFeatureSection(){
    </div>
    <div class="home-gym-grid">
     ${gymSeeds.map(ex=>`<article class="home-gym-card">
+     <button type="button" class="fitness-card-play-trigger home-gym-visual" data-home-gym-open="${safe(ex.id)}" aria-label="Play ${safe(ex.name)} ExerciseDB demonstration">${window.VoraleafFitness?.renderVisual?window.VoraleafFitness.renderVisual(ex):''}</button>
      <div class="home-gym-meta">
       <span class="home-gym-badge">${safe(ex.bodyPart)}</span>
       <span class="home-gym-equip">${safe(ex.equipment)}</span>
+      <span class="home-gym-equip">#${safe(ex.exerciseDbId||'0025')}</span>
      </div>
      <h4><a href="/fitness/${encodeURIComponent(ex.id)}" data-link>${safe(ex.name)}</a></h4>
      <p class="home-gym-target">Target: ${safe(ex.target)}</p>
      <p class="home-gym-desc">${safe(ex.description)}</p>
      <div class="home-gym-actions">
-      <button type="button" class="button small" data-home-gym-open="${safe(ex.id)}">Open in window</button>
+      <button type="button" class="button small" data-home-gym-open="${safe(ex.id)}">▶ Play ExerciseDB</button>
       <a class="text-link" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Full guide ↗</a>
      </div>
     </article>`).join('')}
@@ -648,14 +650,36 @@ function bindPage(){
  });
 
  // Home page Gym & ExerciseDB in-app quick modal
+ $$('.home-gym-card .fitness-provider-image').forEach(img=>{img.onerror=()=>{img.hidden=true;};});
  $$('[data-home-gym-open]').forEach(btn=>{
   btn.onclick=()=>{
    const exId=btn.dataset.homeGymOpen;
    const ex=(window.VORALEAF_FITNESS?.exercises||[]).find(e=>e.id===exId);
    const dlg=$('#gym-quick-dialog'), body=$('#gym-quick-dialog-body');
    if(!ex||!dlg||!body)return;
-   body.innerHTML=`<div class="fitness-modal-head"><span class="eyebrow">${safe((ex.bodyPart||'GYM').toUpperCase())} · ${safe((ex.equipment||'EQUIPMENT').toUpperCase())}</span><button type="button" class="dialog-close" id="close-gym-quick" aria-label="Close window">×</button></div><h2>${safe(ex.name)}</h2><p class="fitness-modal-lead">${safe(ex.description||'')}</p><div class="fitness-modal-grid"><div class="fitness-modal-video-box"><video src="/assets/hero-workout.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp"></video></div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>${safe(ex.target||'Full body')}</dd></div><div><dt>Equipment</dt><dd>${safe(ex.equipment||'Gym')}</dd></div><div><dt>Body area</dt><dd>${safe(ex.bodyPart||'Movement')}</dd></div></dl>${ex.secondaryMuscles?.length?`<p class="fitness-secondary">Secondary muscles: ${ex.secondaryMuscles.map(safe).join(', ')}</p>`:''}<h3>Step-by-step gym form</h3><ol class="fitness-modal-steps">${(ex.instructions||[]).map(s=>`<li>${safe(s)}</li>`).join('')}</ol><div class="fitness-modal-actions"><a class="button" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Open in Gym Library ${arrow}</a><a class="button outline" href="/fitness" data-link>Browse all 24 exercises ${arrow}</a></div></div></div>`;
+   const visHtml=window.VoraleafFitness?.renderVisual?window.VoraleafFitness.renderVisual(ex):'';
+   body.innerHTML=`<div class="fitness-modal-head"><span class="eyebrow">${safe((ex.bodyPart||'GYM').toUpperCase())} · ${safe((ex.equipment||'EQUIPMENT').toUpperCase())} · EXERCISEDB #${safe(ex.exerciseDbId||'0025')}</span><button type="button" class="dialog-close" id="close-gym-quick" aria-label="Close window">×</button></div><h2>${safe(ex.name)}</h2><p class="fitness-modal-lead">${safe(ex.description||'')}</p><div class="fitness-modal-grid"><div class="fitness-modal-visual">${visHtml}<div class="fitness-db-controls" role="group" aria-label="ExerciseDB motion playback controls"><button type="button" class="fitness-db-ctrl is-active" data-home-db-toggle aria-pressed="false">⏸ Pause rep loop</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="slow">0.5× Slow form</button><button type="button" class="fitness-db-ctrl is-active" data-home-db-speed="normal">1.0× Standard</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="fast">1.5× Tempo</button></div></div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>${safe(ex.target||'Full body')}</dd></div><div><dt>Equipment</dt><dd>${safe(ex.equipment||'Gym')}</dd></div><div><dt>ExerciseDB ID</dt><dd>#${safe(ex.exerciseDbId||'0025')}</dd></div></dl>${ex.secondaryMuscles?.length?`<p class="fitness-secondary">Secondary muscles: ${ex.secondaryMuscles.map(safe).join(', ')}</p>`:''}<h3>ExerciseDB step-by-step form</h3><ol class="fitness-modal-steps">${(ex.instructions||[]).map(s=>`<li>${safe(s)}</li>`).join('')}</ol><div class="fitness-modal-actions"><a class="button" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Open in Gym Library ${arrow}</a><a class="button outline" href="/fitness" data-link>Browse all 24 exercises ${arrow}</a></div></div></div>`;
+   $$('.fitness-provider-image',body).forEach(img=>{img.onerror=()=>{img.hidden=true;};});
    $('#close-gym-quick',body)?.addEventListener('click',()=>dlg.close());
+   const art=$('.fitness-exercise-art',body);
+   const toggleBtn=$('[data-home-db-toggle]',body);
+   toggleBtn?.addEventListener('click',()=>{
+    if(!art)return;
+    const paused=art.classList.toggle('is-paused');
+    toggleBtn.textContent=paused?'▶ Play rep loop':'⏸ Pause rep loop';
+    toggleBtn.setAttribute('aria-pressed',String(paused));
+    toggleBtn.classList.toggle('is-active',!paused);
+   });
+   $$('[data-home-db-speed]',body).forEach(sBtn=>{
+    sBtn.addEventListener('click',()=>{
+     if(!art)return;
+     art.classList.remove('speed-slow','speed-fast','is-paused');
+     if(sBtn.dataset.homeDbSpeed==='slow')art.classList.add('speed-slow');
+     else if(sBtn.dataset.homeDbSpeed==='fast')art.classList.add('speed-fast');
+     $$('[data-home-db-speed]',body).forEach(b=>b.classList.toggle('is-active',b===sBtn));
+     if(toggleBtn){toggleBtn.textContent='⏸ Pause rep loop';toggleBtn.setAttribute('aria-pressed','false');toggleBtn.classList.add('is-active');}
+    });
+   });
    if(!dlg.open)dlg.showModal();
   };
  });

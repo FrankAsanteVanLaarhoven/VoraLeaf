@@ -35,3 +35,52 @@
 .fitness-hero-video-btns{display:flex;gap:8px}
 .fitness-video-ctrl{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);font-size:10px;padding:4px 10px;min-height:28px!important;cursor:pointer}
 .fitness-video-ctrl:hover{background:rgba(255,255,255,.25)}
+.fitness-card-play-trigger{width:100%;padding:0;border:0;cursor:pointer;text-align:left;display:block}
+.fitness-db-player{background:radial-gradient(circle at 50% 42%,#f7f6ee 0%,#e2e8d9 100%);border:1px solid #c6cfb9}
+.fitness-db-svg{width:88%;height:88%;max-width:340px;max-height:260px;overflow:visible}
+.fitness-detail-grid .fitness-db-svg{max-width:440px;max-height:360px}
+.fitness-modal-visual .fitness-exercise-art{height:290px}
+.fitness-db-stage-card .fitness-exercise-art{height:220px}
+.fitness-db-grid{fill:none!important;stroke:#8fa18138!important;stroke-width:1;stroke-dasharray:3 3}
+.db-apparatus *{fill:none!important;stroke:#6b7c61!important;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.db-apparatus rect{fill:#cad3be!important;stroke:#6b7c61!important;stroke-width:2.5}
+.db-body-static path,.db-limb{fill:none!important;stroke:#1d3324!important;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.db-body-static circle,.db-rig-moving>circle:not(.db-plate){fill:#f4efe4!important;stroke:#1d3324!important;stroke-width:4}
+.db-bar{fill:none!important;stroke:#2b3a2e!important;stroke-width:4.5;stroke-linecap:round}
+.db-plate{fill:#1c2e22!important;stroke:#c9a86a!important;stroke-width:1.8}
+.db-cable{fill:none!important;stroke:#7c8b72!important;stroke-width:2;stroke-dasharray:4 2}
+.db-muscle-glow{fill:#c98a3b!important;fill-opacity:.55;stroke:#b96a1c!important;stroke-width:1.8;animation:dbGlowPulse 2.2s ease-in-out infinite}
+.fitness-db-id-pill{position:absolute;top:12px;right:14px;background:rgba(23,39,28,.86);color:#f5efe2;font-size:8px;letter-spacing:1.1px;padding:4px 8px;font-weight:600;z-index:3}
+.fitness-art-label{z-index:3;font-weight:600;color:#2c4230}
+.fitness-play-db-btn{min-height:32px!important;padding:6px 11px!important;font-size:9.5px!important}
+.fitness-db-controls{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.fitness-db-ctrl{background:#eef0e5;color:#233829;border:1px solid #b6c1aa;font-size:9.5px;padding:5px 10px;min-height:30px!important;cursor:pointer;letter-spacing:.3px}
+.fitness-db-ctrl.is-active,.fitness-db-ctrl:hover{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.db-move-vertical{animation:dbMoveVertical 2.4s ease-in-out infinite}
+.db-move-squat{animation:dbMoveSquat 2.6s ease-in-out infinite}
+.db-move-hinge{animation:dbMoveHinge 2.8s ease-in-out infinite;transform-origin:118px 105px}
+.db-move-pull{animation:dbMovePull 2.4s ease-in-out infinite}
+.db-move-overhead{animation:dbMoveOverhead 2.4s ease-in-out infinite}
+.db-move-horizontal{animation:dbMoveHorizontal 2.3s ease-in-out infinite}
+.db-move-swing{animation:dbMoveSwing 2s ease-in-out infinite;transform-origin:112px 76px}
+.db-move-sled{animation:dbMoveSled 2.5s ease-in-out infinite}
+.db-move-pushdown{animation:dbMovePushdown 2.2s ease-in-out infinite;transform-origin:128px 92px}
+.db-move-curl{animation:dbMoveCurl 2.2s ease-in-out infinite;transform-origin:116px 96px}
+.db-move-plank{animation:dbMovePlank 2.6s ease-in-out infinite}
+.db-move-calf{animation:dbMoveCalf 2s ease-in-out infinite}
+.fitness-exercise-art.speed-slow svg *{animation-duration:4.6s!important}
+.fitness-exercise-art.speed-fast svg *{animation-duration:1.4s!important}
+.fitness-exercise-art.is-paused svg *{animation-play-state:paused!important}
+@keyframes dbGlowPulse{0%,100%{fill-opacity:.28;transform:scale(.96)}50%{fill-opacity:.72;transform:scale(1.06)}}
+@keyframes dbMoveVertical{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
+@keyframes dbMoveSquat{0%,100%{transform:translateY(0)}50%{transform:translateY(20px)}}
+@keyframes dbMoveHinge{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(-8deg)}}
+@keyframes dbMovePull{0%,100%{transform:translateY(0)}50%{transform:translateY(22px)}}
+@keyframes dbMoveOverhead{0%,100%{transform:translateY(0)}50%{transform:translateY(-24px)}}
+@keyframes dbMoveHorizontal{0%,100%{transform:translateX(0)}50%{transform:translateX(-20px)}}
+@keyframes dbMoveSwing{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-32deg)}}
+@keyframes dbMoveSled{0%,100%{transform:translate(0,0)}50%{transform:translate(16px,-12px)}}
+@keyframes dbMovePushdown{0%,100%{transform:translateY(0)}50%{transform:translateY(18px)}}
+@keyframes dbMoveCurl{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-38deg)}}
+@keyframes dbMovePlank{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes dbMoveCalf{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}

@@ -1,188 +1,320 @@
-/* Curated starter movements, paraphrased from the linked NHS guidance.
- * Region labels support browsing; they do not quantify muscle activation.
- * No NHS photographs, illustrations or third-party video footage are copied.
+/* VORALEAF × ExerciseDB (RapidAPI) Gym & Strength Catalog.
+ * Structured to the official ExerciseDB schema (id, exerciseDbId, name, bodyPart,
+ * target, equipment, secondaryMuscles, instructions, motion).
  */
 window.VORALEAF_FITNESS = {
-  notice: 'Choose activity suitable for your circumstances. If unsure, ask a qualified health professional. Use a stable, non-wheeled chair where required. These examples are separate from coffee products and are not a personalised exercise prescription.',
-  sourceAttribution: 'Movement descriptions paraphrased from NHS guidance; linked videos remain with their publishers. No endorsement of VORALEAF is implied.',
+  notice: 'Choose gym weights and intensities suitable for your training level. Maintain controlled eccentric and concentric tempo on every repetition.',
+  sourceAttribution: 'Exercise schema, muscle targeting and biomechanics powered by ExerciseDB (exercisedb.p.rapidapi.com).',
   categories: ['chest', 'back', 'shoulders', 'upper legs', 'lower legs', 'upper arms', 'lower arms', 'waist', 'cardio', 'neck'],
   exercises: [
     {
-      id: 'starter-barbell-bench-press', name: 'Barbell bench press', bodyPart: 'chest', target: 'pectorals', equipment: 'barbell', secondaryMuscles: ['anterior deltoids', 'triceps'],
-      description: 'A foundational horizontal gym press for upper-body strength and chest development.',
-      instructions: ['Lie flat on the gym bench with your eyes beneath the barbell, feet planted firmly on the floor and shoulder blades drawn together.', 'Unrack the bar with a balanced grip slightly wider than shoulder width, lower with control to mid-chest, then press smoothly back to lockout.'],
-      videoQuery: 'barbell bench press exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-barbell-bench-press', exerciseDbId: '0025', motion: 'bench-press',
+      name: 'Barbell bench press', bodyPart: 'chest', target: 'pectorals', equipment: 'barbell',
+      secondaryMuscles: ['anterior deltoids', 'triceps brachii'],
+      description: 'ExerciseDB #0025 · Compound horizontal barbell press targeting the sternal and clavicular pectorals.',
+      instructions: [
+        'Lie flat on the bench with your eyes aligned under the barbell, feet planted firmly on the floor and scapulae retracted.',
+        'Unrack the barbell with a pronated grip slightly wider than shoulder width and lower smoothly to the mid-sternum.',
+        'Drive the bar upwards along a slight arc back over the shoulders until elbows reach controlled extension.'
+      ],
+      videoQuery: 'barbell bench press exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-barbell-back-squat', name: 'Barbell back squat', bodyPart: 'upper legs', target: 'quadriceps and glutes', equipment: 'barbell', secondaryMuscles: ['hamstrings', 'core', 'lower back'],
-      description: 'A compound gym rack squat targeting the quadriceps, glutes and core stability.',
-      instructions: ['Rest the barbell securely across your upper traps inside the squat rack, step back and set your feet shoulder-width apart with toes slightly turned out.', 'Brace your core, sit your hips back and down until thighs reach parallel, then drive through your mid-foot to stand tall.'],
-      videoQuery: 'barbell squat exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-barbell-back-squat', exerciseDbId: '0043', motion: 'squat',
+      name: 'Barbell full back squat', bodyPart: 'upper legs', target: 'quadriceps', equipment: 'barbell',
+      secondaryMuscles: ['gluteus maximus', 'hamstrings', 'erector spinae', 'core'],
+      description: 'ExerciseDB #0043 · Primary lower-body compound squat building quadriceps, glutes and trunk strength.',
+      instructions: [
+        'Set the barbell across your upper trapezius inside the power rack, unrack and step back into a shoulder-width stance.',
+        'Inhale, brace your core 360 degrees and descend by flexing hips and knees simultaneously until thighs pass parallel.',
+        'Drive forcefully through the mid-foot while keeping knees tracking over toes to return to standing lockout.'
+      ],
+      videoQuery: 'barbell back squat exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-barbell-deadlift', name: 'Romanian barbell deadlift', bodyPart: 'back', target: 'posterior chain and hamstrings', equipment: 'barbell', secondaryMuscles: ['glutes', 'erector spinae', 'forearms'],
-      description: 'A controlled hip-hinge barbell movement for posterior chain power and hamstring resilience.',
-      instructions: ['Stand tall holding the barbell at hip height with a pronated shoulder-width grip and soft knees.', 'Hinge at the hips while keeping your spine neutral and the bar close to your shins until you feel a deep hamstring stretch, then drive your hips forwards to return upright.'],
-      videoQuery: 'romanian deadlift barbell technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-barbell-deadlift', exerciseDbId: '0085', motion: 'deadlift',
+      name: 'Barbell Romanian deadlift', bodyPart: 'back', target: 'hamstrings and glutes', equipment: 'barbell',
+      secondaryMuscles: ['erector spinae', 'latissimus dorsi', 'forearms', 'trapezius'],
+      description: 'ExerciseDB #0085 · Hip-hinge barbell pull developing the entire posterior chain, hamstrings and spinal erectors.',
+      instructions: [
+        'Stand tall holding a loaded barbell at hip level with a shoulder-width overhand grip and a slight knee bend.',
+        'Push your hips straight back while keeping your spine neutral and the bar grazing your thighs and shins.',
+        'Once you feel a full hamstring stretch below the knee, drive your hips forwards to lock out tall.'
+      ],
+      videoQuery: 'romanian deadlift barbell technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-machine-lat-pulldown', name: 'Leverage machine lat pulldown', bodyPart: 'back', target: 'latissimus dorsi', equipment: 'leverage machine', secondaryMuscles: ['biceps', 'rhomboids', 'rear deltoids'],
-      description: 'A controlled vertical gym pull for upper-back width and scapular control.',
-      instructions: ['Secure your thighs beneath the machine pad and take a wide overhand grip on the overhead bar.', 'Depress your shoulder blades first, pull the bar smoothly towards your upper chest while keeping your torso steady, then control the return to full extension.'],
-      videoQuery: 'lat pulldown gym exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-machine-lat-pulldown', exerciseDbId: '0197', motion: 'lat-pulldown',
+      name: 'Cable wide-grip lat pulldown', bodyPart: 'back', target: 'latissimus dorsi', equipment: 'leverage machine',
+      secondaryMuscles: ['biceps brachii', 'rhomboids', 'teres major', 'posterior deltoids'],
+      description: 'ExerciseDB #0197 · Vertical overhead gym pull for upper-back width and scapular depression.',
+      instructions: [
+        'Anchor your thighs securely under the roller pad and grasp the wide angled bar with an overhand grip.',
+        'Depress your shoulder blades and pull your elbows down and in towards your ribs until the bar reaches your upper chest.',
+        'Pause briefly at peak contraction, then guide the bar smoothly back to full overhead lat stretch.'
+      ],
+      videoQuery: 'lat pulldown gym exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-dumbbell-shoulder-press', name: 'Overhead dumbbell shoulder press', bodyPart: 'shoulders', target: 'deltoids', equipment: 'dumbbell', secondaryMuscles: ['triceps', 'upper trapezius', 'core'],
-      description: 'An overhead gym press building balanced shoulder strength and overhead stability.',
-      instructions: ['Sit on an upright bench or stand tall holding a pair of dumbbells at shoulder level with palms facing forwards or slightly neutral.', 'Brace your midsection, press the dumbbells overhead until arms are aligned by your ears, then lower slowly back to shoulder height.'],
-      videoQuery: 'dumbbell shoulder press exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-dumbbell-shoulder-press', exerciseDbId: '0310', motion: 'shoulder-press',
+      name: 'Dumbbell seated overhead press', bodyPart: 'shoulders', target: 'deltoids', equipment: 'dumbbell',
+      secondaryMuscles: ['triceps brachii', 'upper trapezius', 'serratus anterior'],
+      description: 'ExerciseDB #0310 · Vertical dumbbell press targeting anterior and lateral deltoid heads.',
+      instructions: [
+        'Sit upright on a 90-degree bench holding a pair of dumbbells at ear level with wrists stacked over elbows.',
+        'Press both dumbbells vertically overhead in a controlled arc until arms are extended without clanking the weights.',
+        'Lower under a 2-second eccentric tempo back to shoulder height and repeat.'
+      ],
+      videoQuery: 'dumbbell shoulder press exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-cable-seated-row', name: 'Seated cable row', bodyPart: 'back', target: 'mid-back and rhomboids', equipment: 'cable', secondaryMuscles: ['latissimus dorsi', 'biceps', 'rear deltoids'],
-      description: 'A horizontal cable pull for posture, back thickness and shoulder-blade retraction.',
-      instructions: ['Sit tall at the cable row station with knees slightly bent and grasp the handle with arms extended.', 'Draw your elbows back past your ribs while squeezing your shoulder blades together, pause briefly at the abdomen, then extend your arms with control.'],
-      videoQuery: 'seated cable row exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-cable-seated-row', exerciseDbId: '0861', motion: 'cable-row',
+      name: 'Cable seated low row', bodyPart: 'back', target: 'upper back and lats', equipment: 'cable',
+      secondaryMuscles: ['rhomboids', 'middle trapezius', 'biceps brachii', 'rear deltoids'],
+      description: 'ExerciseDB #0861 · Horizontal cable row building mid-back density, rhomboids and postural strength.',
+      instructions: [
+        'Plant your feet on the platform with knees slightly bent and sit tall with a neutral spine holding the V-bar handle.',
+        'Drive your elbows straight back past your torso while squeezing your shoulder blades together.',
+        'Hold the handle against your midsection for one count before extending your arms forwards under tension.'
+      ],
+      videoQuery: 'seated cable row exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-kettlebell-swing', name: 'Two-handed kettlebell swing', bodyPart: 'cardio', target: 'posterior chain and conditioning', equipment: 'kettlebell', secondaryMuscles: ['glutes', 'hamstrings', 'core', 'shoulders'],
-      description: 'A dynamic gym conditioning movement combining explosive hip drive with cardiovascular stamina.',
-      instructions: ['Stand with feet slightly wider than hip width and hike the kettlebell back between your thighs with a flat back.', 'Snap your hips forwards explosively to float the kettlebell to chest height while keeping arms relaxed, then let it swing back into the next hip hinge.'],
-      videoQuery: 'kettlebell swing exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-kettlebell-swing', exerciseDbId: '0549', motion: 'kettlebell-swing',
+      name: 'Kettlebell two-arm swing', bodyPart: 'cardio', target: 'cardiovascular and glutes', equipment: 'kettlebell',
+      secondaryMuscles: ['hamstrings', 'erector spinae', 'core', 'deltoids'],
+      description: 'ExerciseDB #0549 · Ballistic hip-hinge conditioning exercise for explosive power and metabolic output.',
+      instructions: [
+        'Stand with feet slightly wider than shoulder width and hike the kettlebell high between your thighs with a flat back.',
+        'Snap your hips and glutes into full extension so momentum floats the kettlebell to chest level.',
+        'Let the bell descend naturally and hinge only once your forearms reconnect with your upper thighs.'
+      ],
+      videoQuery: 'kettlebell swing exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-machine-leg-press', name: 'Seated leg press machine', bodyPart: 'upper legs', target: 'quadriceps and glutes', equipment: 'leverage machine', secondaryMuscles: ['hamstrings', 'calves'],
-      description: 'A guided gym sled press for controlled lower-body hypertrophy and leg drive.',
-      instructions: ['Sit with your back and hips flat against the angled pad and place your feet hip-width apart in the centre of the footplate.', 'Release the safety catches, lower the platform until your knees reach roughly 90 degrees without lifting your lower back, then press evenly through your heels.'],
-      videoQuery: 'leg press machine exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-machine-leg-press', exerciseDbId: '0739', motion: 'leg-press',
+      name: 'Sled 45-degree leg press', bodyPart: 'upper legs', target: 'quadriceps', equipment: 'leverage machine',
+      secondaryMuscles: ['gluteus maximus', 'hamstrings', 'adductors'],
+      description: 'ExerciseDB #0739 · Heavy angled sled press isolating the quadriceps and glutes with back support.',
+      instructions: [
+        'Sit with your lower back and hips pressed firmly into the angled seat and place feet hip-width apart on the sled.',
+        'Disengage the safety bars and lower the sled slowly until your knees reach a 90-degree angle.',
+        'Press through your heels and mid-foot to extend the legs without locking out the knee joints.'
+      ],
+      videoQuery: 'leg press machine exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-cable-triceps-pushdown', name: 'Cable triceps pushdown', bodyPart: 'upper arms', target: 'triceps', equipment: 'cable', secondaryMuscles: ['forearms', 'anterior deltoids'],
-      description: 'An isolation cable press for triceps lockout strength and upper-arm definition.',
-      instructions: ['Stand facing a high pulley with a rope or straight bar attachment and pin your elbows comfortably beside your ribs.', 'Extend your forearms downwards until your arms are straight, squeeze the triceps briefly, then allow the cable to rise slowly to elbow level.'],
-      videoQuery: 'cable triceps pushdown technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-cable-triceps-pushdown', exerciseDbId: '0201', motion: 'triceps-pushdown',
+      name: 'Cable rope triceps pushdown', bodyPart: 'upper arms', target: 'triceps', equipment: 'cable',
+      secondaryMuscles: ['anconeus', 'forearm stabilizers'],
+      description: 'ExerciseDB #0201 · High-pulley cable extension targeting all three heads of the triceps brachii.',
+      instructions: [
+        'Attach a rope to a high pulley, hinge slightly forwards from the hips and pin your upper arms to your sides.',
+        'Extend your elbows to press the rope downwards, spreading the ends apart at the bottom of the rep.',
+        'Squeeze the triceps hard, then control the weight back to a 90-degree elbow angle.'
+      ],
+      videoQuery: 'cable triceps pushdown technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-band-face-pull', name: 'Resistance band face pull', bodyPart: 'shoulders', target: 'rear deltoids and upper back', equipment: 'resistance band', secondaryMuscles: ['rotator cuff', 'rhomboids', 'middle trapezius'],
-      description: 'A shoulder-health and posture pull targeting the rear deltoids and external rotators.',
-      instructions: ['Anchor a resistance band at upper-chest height, hold both ends and step back to create light tension.', 'Pull the band towards your forehead while separating your hands and rotating your thumbs backwards, then return slowly.'],
-      videoQuery: 'band face pull exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-band-face-pull', exerciseDbId: '0032', motion: 'face-pull',
+      name: 'Band & cable rear-delt face pull', bodyPart: 'shoulders', target: 'posterior deltoids', equipment: 'resistance band',
+      secondaryMuscles: ['infraspinatus', 'teres minor', 'rhomboids', 'middle trapezius'],
+      description: 'ExerciseDB #0032 · External-rotation upper-back pull for rear deltoids and shoulder joint resilience.',
+      instructions: [
+        'Anchor the resistance band at eye level, grasp both handles with thumbs pointing backwards and step back.',
+        'Pull the centre of the band towards your forehead while flaring elbows high and externally rotating the shoulders.',
+        'Pause in the double-biceps rear-delt position, then return smoothly to starting tension.'
+      ],
+      videoQuery: 'band face pull exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-forearm-wrist-curl', name: 'Dumbbell wrist curl', bodyPart: 'lower arms', target: 'forearm flexors', equipment: 'dumbbell', secondaryMuscles: ['grip stabilizers'],
-      description: 'A targeted forearm and grip-strength movement using light to moderate dumbbells.',
-      instructions: ['Rest your forearms along your thighs or a flat bench with your palms facing upwards and wrists just beyond your knees.', 'Lower the dumbbell gently towards your fingers, then curl your wrists upwards with control.'],
-      videoQuery: 'dumbbell wrist curl exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-forearm-wrist-curl', exerciseDbId: '0378', motion: 'wrist-curl',
+      name: 'Dumbbell seated palms-up wrist curl', bodyPart: 'lower arms', target: 'forearm flexors', equipment: 'dumbbell',
+      secondaryMuscles: ['brachioradialis', 'finger flexors'],
+      description: 'ExerciseDB #0378 · Direct forearm flexor curl for grip strength and wrist stability.',
+      instructions: [
+        'Sit on a flat bench and rest the backs of your forearms along your thighs with wrists extending past your knees.',
+        'Allow the dumbbells to roll slightly down towards your fingers under control.',
+        'Curl your wrists upwards as high as possible while keeping your forearms flat against your thighs.'
+      ],
+      videoQuery: 'dumbbell wrist curl exercise',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-plank-core-hold', name: 'Forearm plank core hold', bodyPart: 'waist', target: 'abdominals and core', equipment: 'body weight', secondaryMuscles: ['obliques', 'shoulders', 'glutes'],
-      description: 'An isometric gym mat hold building deep trunk stability and spinal endurance.',
-      instructions: ['Place your forearms on a mat with elbows directly beneath your shoulders and extend your legs behind you.', 'Brace your abs and glutes to maintain a straight line from head to heels while breathing steadily.'],
-      videoQuery: 'forearm plank exercise technique', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-plank-core-hold', exerciseDbId: '0464', motion: 'plank',
+      name: 'Front forearm plank', bodyPart: 'waist', target: 'abdominals', equipment: 'body weight',
+      secondaryMuscles: ['transverse abdominis', 'obliques', 'glutes', 'serratus anterior'],
+      description: 'ExerciseDB #0464 · Anti-extension isometric core hold for trunk rigidity and spinal support.',
+      instructions: [
+        'Set your forearms parallel on the gym mat with elbows stacked directly beneath your shoulders.',
+        'Tuck your pelvis slightly, contract your glutes and quadriceps, and maintain a straight line from crown to heels.',
+        'Breathe rhythmically behind a braced abdominal wall for the target hold duration.'
+      ],
+      videoQuery: 'forearm plank exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-sit-to-stand', name: 'Sit-to-stand', bodyPart: 'upper legs', target: 'legs', equipment: 'chair', secondaryMuscles: [],
-      description: 'A controlled transition from sitting to standing.',
-      instructions: ['Begin near the chair’s front edge; position feet apart and incline forwards slightly.', 'Rise slowly, looking ahead, then lower yourself carefully.'],
-      videoQuery: 'NHS sit to stand exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-biceps-curl', exerciseDbId: '0291', motion: 'biceps-curl',
+      name: 'Dumbbell standing alternating biceps curl', bodyPart: 'upper arms', target: 'biceps brachii', equipment: 'dumbbell',
+      secondaryMuscles: ['brachialis', 'brachioradialis', 'anterior deltoids'],
+      description: 'ExerciseDB #0291 · Supinating dumbbell curl isolating the long and short heads of the biceps.',
+      instructions: [
+        'Stand tall holding a pair of dumbbells at arm’s length with elbows tucked beside your ribcage.',
+        'Curl the weights upwards while supinating your palms so your little fingers turn slightly higher at the top.',
+        'Squeeze at peak contraction, then lower under a controlled 2-second eccentric phase.'
+      ],
+      videoQuery: 'dumbbell biceps curl technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-mini-squat', name: 'Supported mini-squat', bodyPart: 'upper legs', target: 'legs', equipment: 'chair', secondaryMuscles: [],
-      description: 'A shallow, supported knee-bending movement.',
-      instructions: ['Hold the chair back; separate your feet to hip width.', 'Keep your back straight, bend your knees comfortably, then straighten slowly.'],
-      videoQuery: 'NHS mini squat exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-wall-press', exerciseDbId: '0662', motion: 'push-up',
+      name: 'Strict bodyweight push-up', bodyPart: 'chest', target: 'pectorals', equipment: 'body weight',
+      secondaryMuscles: ['triceps brachii', 'anterior deltoids', 'core'],
+      description: 'ExerciseDB #0662 · Classic horizontal bodyweight press developing chest, triceps and scapular control.',
+      instructions: [
+        'Set your hands slightly wider than shoulder width in a rigid plank position with glutes and abs braced.',
+        'Lower your chest to within an inch of the floor with elbows angled at roughly 45 degrees from your torso.',
+        'Press the floor away explosively to full elbow extension while maintaining a straight body line.'
+      ],
+      videoQuery: 'push up exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-calf-raise', name: 'Supported calf raise', bodyPart: 'lower legs', target: 'calves', equipment: 'chair', secondaryMuscles: [],
-      description: 'A supported heel-lifting movement.',
-      instructions: ['Steady yourself using the chair back.', 'Raise your heels within a comfortable range; lower them with control.'],
-      videoQuery: 'NHS supported calf raises', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-sit-to-stand', exerciseDbId: '0336', motion: 'squat',
+      name: 'Dumbbell Bulgarian split squat', bodyPart: 'upper legs', target: 'quadriceps and glutes', equipment: 'dumbbell',
+      secondaryMuscles: ['hamstrings', 'adductors', 'calves', 'core'],
+      description: 'ExerciseDB #0336 · Rear-foot-elevated unilateral squat for single-leg power, balance and glute hypertrophy.',
+      instructions: [
+        'Stand two feet in front of a flat bench holding dumbbells at your sides and rest the laces of your rear foot on the pad.',
+        'Lower your rear knee towards the floor while keeping your front shin vertical or slightly angled forwards.',
+        'Drive through your front heel to return to full single-leg extension.'
+      ],
+      videoQuery: 'bulgarian split squat dumbbell technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-wall-press', name: 'Wall press-up', bodyPart: 'chest', target: 'chest', equipment: 'wall', secondaryMuscles: [],
-      description: 'An upright press against a wall.',
-      instructions: ['Face the wall at arm’s length; place palms at chest level.', 'Keep your body straight, bend your elbows close to your sides, then press away.'],
-      videoQuery: 'NHS wall press up exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-mini-squat', exerciseDbId: '0285', motion: 'squat',
+      name: 'Dumbbell goblet squat', bodyPart: 'upper legs', target: 'quadriceps', equipment: 'dumbbell',
+      secondaryMuscles: ['gluteus maximus', 'core', 'upper back'],
+      description: 'ExerciseDB #0285 · Front-loaded goblet squat reinforcing upright torso mechanics and deep hip mobility.',
+      instructions: [
+        'Cup the top bell of a heavy dumbbell or kettlebell tight against your sternum with elbows pointing downwards.',
+        'Sit down between your hips while keeping your chest proud and elbows tracking inside your knees.',
+        'Press evenly through the floor to stand tall and squeeze the glutes at the top.'
+      ],
+      videoQuery: 'goblet squat dumbbell technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-biceps-curl', name: 'Light biceps curl', bodyPart: 'upper arms', target: 'biceps', equipment: 'dumbbell', secondaryMuscles: [],
-      description: 'A light hand-weight curl.',
-      instructions: ['Use light hand weights; keep your upper arms beside your body.', 'Bend your elbows to bring the weights towards your shoulders, then lower slowly.'],
-      videoQuery: 'NHS biceps curl exercise light weights', sourceUrl: 'https://www.nhs.uk/live-well/exercise/strength-exercises/'
+      id: 'starter-calf-raise', exerciseDbId: '0088', motion: 'calf-raise',
+      name: 'Barbell standing calf raise', bodyPart: 'lower legs', target: 'calves', equipment: 'barbell',
+      secondaryMuscles: ['soleus', 'tibialis posterior'],
+      description: 'ExerciseDB #0088 · Loaded ankle plantarflexion targeting the gastrocnemius and soleus complex.',
+      instructions: [
+        'Position the barbell across your upper back with the balls of your feet elevated on a calf block.',
+        'Lower your heels below the platform level to achieve a deep gastrocnemius stretch.',
+        'Drive up onto the balls of your feet as high as possible and hold the peak contraction for one second.'
+      ],
+      videoQuery: 'standing barbell calf raise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-seated-chest-stretch', name: 'Seated chest stretch', bodyPart: 'chest', target: 'chest', equipment: 'chair', secondaryMuscles: [],
-      description: 'An upright, seated opening movement.',
-      instructions: ['Sit clear of the backrest; ease your shoulders down and back, opening your arms sideways.', 'Move your chest gently forwards and upwards until a comfortable stretch is felt.'],
-      videoQuery: 'NHS seated chest stretch', sourceUrl: 'https://www.nhs.uk/live-well/exercise/sitting-exercises/'
+      id: 'starter-seated-chest-stretch', exerciseDbId: '0308', motion: 'bench-press',
+      name: 'Dumbbell incline chest fly', bodyPart: 'chest', target: 'upper pectorals', equipment: 'dumbbell',
+      secondaryMuscles: ['anterior deltoids', 'biceps brachii (stabilizer)'],
+      description: 'ExerciseDB #0308 · Incline arc adduction isolating the clavicular pectoral fibres under a deep stretch.',
+      instructions: [
+        'Lie on a 30-degree incline bench holding dumbbells above your upper chest with a slight bend in your elbows.',
+        'Open your arms wide in a smooth arc until you feel a controlled stretch across the chest.',
+        'Bring the dumbbells back together over your sternum as if hugging a barrel.'
+      ],
+      videoQuery: 'incline dumbbell chest fly technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-upper-body-twist', name: 'Seated upper-body twist', bodyPart: 'back', target: 'upper back', equipment: 'chair', secondaryMuscles: [],
-      description: 'A gentle seated turning movement.',
-      instructions: ['Sit tall with feet grounded; cross your arms towards opposite shoulders.', 'Keep your hips still while turning your torso comfortably left, then right.'],
-      videoQuery: 'NHS seated upper body twist', sourceUrl: 'https://www.nhs.uk/live-well/exercise/sitting-exercises/'
+      id: 'starter-upper-body-twist', exerciseDbId: '0651', motion: 'lat-pulldown',
+      name: 'Wide-grip pull-up', bodyPart: 'back', target: 'latissimus dorsi', equipment: 'body weight',
+      secondaryMuscles: ['biceps brachii', 'teres major', 'rhomboids', 'core'],
+      description: 'ExerciseDB #0651 · Overhead bodyweight vertical pull for upper-body relative strength and V-taper lats.',
+      instructions: [
+        'Hang from a pull-up bar with a pronated grip wider than shoulder width and engage your scapulae.',
+        'Pull your sternum towards the bar by driving your elbows down towards your hips.',
+        'Lower with full control back to a dead hang before initiating the next repetition.'
+      ],
+      videoQuery: 'wide grip pull up technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-hip-march', name: 'Seated hip march', bodyPart: 'upper legs', target: 'hips and thighs', equipment: 'chair', secondaryMuscles: [],
-      description: 'Alternating seated knee lifts.',
-      instructions: ['Sit upright without leaning back; hold the chair sides.', 'Lift one bent knee comfortably, place the foot down slowly, then alternate legs.'],
-      videoQuery: 'NHS seated hip marching exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/sitting-exercises/'
+      id: 'starter-hip-march', exerciseDbId: '1409', motion: 'deadlift',
+      name: 'Barbell hip thrust', bodyPart: 'upper legs', target: 'glutes', equipment: 'barbell',
+      secondaryMuscles: ['hamstrings', 'quadriceps', 'core'],
+      description: 'ExerciseDB #1409 · Horizontal loaded hip extension maximizing peak gluteus maximus activation.',
+      instructions: [
+        'Sit on the floor with your upper back against a bench and roll a padded barbell over your hip crease.',
+        'Plant your feet so your shins are vertical at the top of the movement and drive your hips upwards.',
+        'Lock out with a level pelvis and hard glute squeeze, then lower hips under control.'
+      ],
+      videoQuery: 'barbell hip thrust technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-ankle-stretch', name: 'Seated ankle movement', bodyPart: 'lower legs', target: 'ankles', equipment: 'chair', secondaryMuscles: [],
-      description: 'A seated point-and-flex movement.',
-      instructions: ['Hold the chair sides and extend one leg with the foot lifted.', 'Point the toes away, then draw them back; change legs.'],
-      videoQuery: 'NHS seated ankle stretch', sourceUrl: 'https://www.nhs.uk/live-well/exercise/sitting-exercises/'
+      id: 'starter-ankle-stretch', exerciseDbId: '1374', motion: 'calf-raise',
+      name: 'Seated machine calf raise', bodyPart: 'lower legs', target: 'soleus and calves', equipment: 'leverage machine',
+      secondaryMuscles: ['gastrocnemius', 'achilles complex'],
+      description: 'ExerciseDB #1374 · Bent-knee calf press isolating the deep soleus muscle of the lower leg.',
+      instructions: [
+        'Sit at the seated calf raise machine with the balls of your feet on the platform and knees under the pad.',
+        'Release the safety lever, lower your heels into a full dorsiflexion stretch, then press up to full extension.'
+      ],
+      videoQuery: 'seated calf raise machine technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-side-bend', name: 'Standing sideways bend', bodyPart: 'waist', target: 'lower back', equipment: 'body weight', secondaryMuscles: [],
-      description: 'A small standing side stretch.',
-      instructions: ['Stand tall, feet apart and arms relaxed beside you.', 'Slide a hand down its side within a comfortable range; return upright and change sides.'],
-      videoQuery: 'NHS standing sideways bend stretch', sourceUrl: 'https://www.nhs.uk/live-well/exercise/flexibility-exercises/'
+      id: 'starter-side-bend', exerciseDbId: '0687', motion: 'plank',
+      name: 'Weighted Russian core twist', bodyPart: 'waist', target: 'obliques and abs', equipment: 'dumbbell',
+      secondaryMuscles: ['rectus abdominis', 'hip flexors', 'transverse abdominis'],
+      description: 'ExerciseDB #0687 · Rotational trunk conditioning targeting the internal and external obliques.',
+      instructions: [
+        'Sit on a mat with knees bent, torso reclined to 45 degrees and hold a dumbbell or weight plate at chest level.',
+        'Rotate your ribcage and shoulders from side to side under control while keeping your spine long.'
+      ],
+      videoQuery: 'russian twist exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-calf-stretch', name: 'Wall-supported calf stretch', bodyPart: 'lower legs', target: 'calves', equipment: 'wall', secondaryMuscles: [],
-      description: 'A supported split-stance stretch.',
-      instructions: ['Place hands on a wall; bend the front knee and step the other leg back.', 'Keep the rear leg straight and heel grounded, then change legs.'],
-      videoQuery: 'NHS wall calf stretch', sourceUrl: 'https://www.nhs.uk/live-well/exercise/flexibility-exercises/'
+      id: 'starter-calf-stretch', exerciseDbId: '1372', motion: 'leg-press',
+      name: 'Sled calf press on leg press', bodyPart: 'lower legs', target: 'gastrocnemius', equipment: 'leverage machine',
+      secondaryMuscles: ['soleus'],
+      description: 'ExerciseDB #1372 · Straight-leg sled toe press for heavy gastrocnemius loading.',
+      instructions: [
+        'Position the balls of your feet along the bottom edge of the leg press sled with legs extended and knees soft.',
+        'Allow the sled to flex your ankles into a controlled stretch, then press forcefully through the balls of your feet.'
+      ],
+      videoQuery: 'calf press on leg press machine',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     },
     {
-      id: 'starter-neck-rotation', name: 'Seated neck rotation', bodyPart: 'neck', target: 'neck', equipment: 'chair', secondaryMuscles: [],
-      description: 'A comfortable seated head turn.',
-      instructions: ['Sit tall with shoulders relaxed and look ahead.', 'Turn towards one shoulder without forcing the movement; return to centre and try the other side.'],
-      videoQuery: 'NHS gentle neck rotation exercise', sourceUrl: 'https://www.nhs.uk/live-well/exercise/flexibility-exercises/'
+      id: 'starter-neck-rotation', exerciseDbId: '0406', motion: 'shoulder-press',
+      name: 'Dumbbell standing upper-trap shrug', bodyPart: 'neck', target: 'upper trapezius and neck', equipment: 'dumbbell',
+      secondaryMuscles: ['levator scapulae', 'rhomboids', 'forearms'],
+      description: 'ExerciseDB #0406 · Vertical scapular elevation strengthening the upper trapezius and cervical support.',
+      instructions: [
+        'Stand tall holding heavy dumbbells at your sides with a neutral head position.',
+        'Elevate your shoulders straight up towards your ears without rolling the joints, pause for one second, then lower slowly.'
+      ],
+      videoQuery: 'dumbbell shrug exercise technique',
+      sourceUrl: 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb'
     }
   ],
-  videos: [
-    {
-      id: 'NL8IRKjLPf0', title: 'Upper-body press & chest mechanics', channelTitle: 'NHS',
-      exerciseIds: ['starter-wall-press', 'starter-barbell-bench-press', 'starter-cable-triceps-pushdown', 'starter-biceps-curl', 'starter-forearm-wrist-curl'], bodyParts: ['chest', 'upper arms', 'lower arms'],
-      sourceUrl: 'https://www.youtube.com/watch?v=NL8IRKjLPf0'
-    },
-    {
-      id: 'oLu9kwDzBdg', title: 'Try a general warm-up', channelTitle: 'NHS',
-      embeddable: false, // Owner-disabled external playback observed 24 October 2026; retain provenance only.
-      exerciseIds: ['starter-sit-to-stand', 'starter-mini-squat', 'starter-calf-raise', 'starter-wall-press', 'starter-biceps-curl', 'starter-seated-chest-stretch', 'starter-upper-body-twist', 'starter-hip-march', 'starter-ankle-stretch', 'starter-side-bend', 'starter-calf-stretch', 'starter-neck-rotation', 'starter-kettlebell-swing'],
-      bodyParts: ['cardio'], sourceUrl: 'https://www.youtube.com/watch?v=oLu9kwDzBdg'
-    },
-    {
-      id: 'GcPujVayIbI', title: 'Upper back, shoulders & posture mechanics', channelTitle: 'Cambridge University Hospitals NHS Foundation Trust',
-      exerciseIds: ['starter-seated-chest-stretch', 'starter-upper-body-twist', 'starter-machine-lat-pulldown', 'starter-dumbbell-shoulder-press', 'starter-cable-seated-row', 'starter-band-face-pull'], bodyParts: ['back', 'shoulders', 'chest'],
-      sourceUrl: 'https://www.cuh.nhs.uk/our-services/physiotherapy-outpatients/outpatient-physio-resources/resources/shoulder/seated-stretches/'
-    },
-    {
-      id: 'IB-8SWyylME', title: 'Back, core & posterior chain mechanics', channelTitle: 'Cambridge University Hospitals NHS Foundation Trust',
-      exerciseIds: ['starter-upper-body-twist', 'starter-side-bend', 'starter-sit-to-stand', 'starter-barbell-deadlift', 'starter-plank-core-hold', 'starter-kettlebell-swing'], bodyParts: ['back', 'upper legs', 'waist', 'cardio'],
-      sourceUrl: 'https://www.cuh.nhs.uk/our-services/physiotherapy-outpatients/outpatient-physio-resources/resources/shoulder/seated-stretches/'
-    },
-    {
-      id: 'Kvcc_DhFoeg', title: 'Lower-body squat, leg press & calf mechanics', channelTitle: 'Cambridge University Hospitals NHS Foundation Trust',
-      exerciseIds: ['starter-calf-stretch', 'starter-calf-raise', 'starter-mini-squat', 'starter-barbell-back-squat', 'starter-machine-leg-press', 'starter-hip-march', 'starter-ankle-stretch'], bodyParts: ['upper legs', 'lower legs'],
-      sourceUrl: 'https://www.cuh.nhs.uk/our-services/physiotherapy-outpatients/outpatient-physio-resources/resources/shoulder/seated-stretches/'
-    },
-    {
-      id: 'Q14tE13GNrs', title: 'Neck & upper-trap mobility', channelTitle: 'Cambridge University Hospitals NHS Foundation Trust',
-      exerciseIds: ['starter-neck-rotation'], bodyParts: ['neck'],
-      sourceUrl: 'https://www.cuh.nhs.uk/our-services/physiotherapy-outpatients/outpatient-physio-resources/resources/shoulder/seated-stretches/'
-    }
-  ]
+  videos: []
 };

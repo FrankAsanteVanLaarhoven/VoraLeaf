@@ -340,6 +340,8 @@
 .home-gym-head h3{font-size:34px;margin:0}
 .home-gym-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .home-gym-card{background:#f0eee5;border:1px solid #c5cdb9;padding:22px;display:flex;flex-direction:column;gap:10px}
+.home-gym-visual{margin:-4px -4px 4px;display:block}
+.home-gym-visual .fitness-exercise-art{height:185px}
 .home-gym-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:9px;text-transform:uppercase;letter-spacing:1.1px}
 .home-gym-badge{background:var(--forest);color:var(--cream);padding:3px 8px}
 .home-gym-equip{border:1px solid #8e9c82;color:#3d5242;padding:3px 8px}
