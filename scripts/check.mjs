@@ -73,6 +73,7 @@ try {
   verify(Array.isArray(data.benefits) && data.benefits.length === 4, 'Four vitality benefit pillars are required.');
   verify(Array.isArray(data.ingredients?.items) && data.ingredients.items.length === 6, 'Six core botanical/coffee ingredients (including Mixed African Roots Bitter Herbs) are required.');
   verify(data.ingredients.items.some(i => i.name === 'Mixed African Roots Bitter Herbs'), 'Mixed African Roots Bitter Herbs must be present in ingredients.');
+  verify(Array.isArray(data.heroPlaylist) && data.heroPlaylist.length === 5, 'Five hero/campaign films are required in heroPlaylist.');
   verify(data.commerce?.paypal?.endpoint === '/api/checkout/paypal' && data.commerce?.stripe?.endpoint === '/api/checkout/stripe' && !JSON.stringify(data.commerce).includes('frankleroyvan@gmail.com'), 'Client commerce config must use server endpoints without exposing internal merchant email.');
 
   let svgCount = 0;
@@ -101,9 +102,9 @@ try {
   verify(new Set(fitnessIds).size === fitnessIds.length, 'Duplicate exercise ID.');
   for(const e of fitness.exercises){verify(/^starter-[a-z0-9-]+$/.test(e.id), 'Invalid starter ID.');verify(Array.isArray(e.instructions)&&e.instructions.length>0,'Missing movement guidance.');verify(new URL(e.sourceUrl).hostname==='www.nhs.uk','Starter source must be NHS.');}
   for(const v of fitness.videos){verify(/^[A-Za-z0-9_-]{11}$/.test(v.id),'Invalid curated YouTube ID.');verify(v.exerciseIds.every(id=>fitnessIds.includes(id)),'Invalid video/exercise mapping.');}
-  const baseRoutes = ['fitness', 'collection', 'journal', 'movement', 'studio', 'bag', 'contact', 'about', 'privacy'];
+  const baseRoutes = ['fitness', 'collection', 'intimate', 'journal', 'movement', 'studio', 'bag', 'contact', 'about', 'privacy'];
   const routes = [...baseRoutes, ...productIds.map(id => `products/${id}`), ...articleIds.map(id => `journal/${id}`), ...fitnessIds.map(id=>`fitness/${id}`)];
-  verify(routes.length === 18 + fitnessIds.length, 'Unexpected route inventory.');
+  verify(routes.length === 19 + fitnessIds.length, 'Unexpected route inventory.');
   const shell = readFileSync(path.join(publicRoot, 'index.html'));
   for (const route of routes) {
     const filename = existingTarget(`/${route}/`);
@@ -144,9 +145,21 @@ try {
   for (const match of String(shell).matchAll(/(?:href|src)="([^"]+\.(?:css|js)(?:\?[^"]*)?)"/g)) verify(cachedPaths.includes(match[1]), `Versioned page asset missing from offline shell: ${match[1]}`);
   console.log(`PASS PWA: ${manifest.icons.length} PNG icons, ${cachedPaths.length} existing shell assets`);
 
-  const video = readFileSync(existingTarget('/assets/ritual-motion-study.mp4'));
-  verify(video.length > 1024 && video.subarray(4, 8).toString('ascii') === 'ftyp', 'Motion study is missing or is not an MP4 container.');
-  console.log(`PASS Media: MP4 container present (${video.length.toLocaleString('en-GB')} bytes)`);
+  const requiredVideos = [
+    '/assets/ritual-motion-study.mp4',
+    '/assets/hero.mp4',
+    '/assets/bold-mens.mp4',
+    '/assets/bloom-womens.mp4',
+    '/assets/hero-workout.mp4',
+    '/assets/intimate.mp4',
+  ];
+  let totalVideoBytes = 0;
+  for (const videoPath of requiredVideos) {
+    const video = readFileSync(existingTarget(videoPath));
+    verify(video.length > 1024 && video.subarray(4, 8).toString('ascii') === 'ftyp', `Video is missing or is not an MP4 container: ${videoPath}`);
+    totalVideoBytes += video.length;
+  }
+  console.log(`PASS Media: ${requiredVideos.length} MP4 containers present (${totalVideoBytes.toLocaleString('en-GB')} bytes total)`);
 
   for (const forbidden of ['.openai', 'tmp', 'upload', 'generated_images', 'library_helpers']) {
     if(forbidden === '.openai' && process.env.VORALEAF_SITES_BUILD === '1') continue;

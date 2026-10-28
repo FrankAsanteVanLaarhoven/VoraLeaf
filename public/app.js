@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const {products,bundles,trustPillars,aboutBlend,benefits,ingredients,certifications,reviews,commerce,articles,scenes}=window.VORALEAF;
+const {products,bundles,trustPillars,aboutBlend,benefits,ingredients,certifications,reviews,commerce,articles,scenes,heroPlaylist}=window.VORALEAF;
 const packagingPhotos={
  bold:[['bold-opening.webp','Open the illustrated envelope to reveal the sealed gold inner pouch.'],['sachets-triptych.webp','The collection: separate paper envelopes and individually sealed inner pouches.'],['water-pouring.webp','BOLD preparation concept: an opened inner pouch beside the cup as water is poured.']],
  ember:[['ember-in-hand.webp','EMBER: an oxblood paper envelope and a separate sealed gold inner pouch.'],['sachets-triptych.webp','BOLD and EMBER have gold inner pouches; BLOOM has a rose-gold inner pouch.']],
@@ -11,7 +11,7 @@ const storedBag=read('voraleaf-bag',[]),storedSaved=read('voraleaf-saved',[]);
 const main=$('#main');
 let bag=(Array.isArray(storedBag)?storedBag:[]).filter(i=>i&&products.some(p=>p.id===i.id)&&['6x15g','10x10g'].includes(i.format)&&Number.isFinite(Number(i.qty))).map(i=>({id:i.id,format:i.format,qty:Math.max(1,Math.min(99,Math.floor(Number(i.qty))))}));
 let saved=[...new Set((Array.isArray(storedSaved)?storedSaved:[]).filter(id=>articles.some(a=>a.id===id)))];
-let format='6x15g', selectedBundleBoxes=1, featuredEdition='bold', filter='All', query='', timerId=null, remaining=120, deferredInstall=null, checkoutNoticeState=null;
+let format='6x15g', selectedBundleBoxes=1, featuredEdition='bold', heroVideoIdx=0, filter='All', query='', timerId=null, remaining=120, deferredInstall=null, checkoutNoticeState=null;
 
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
@@ -120,11 +120,157 @@ function reviewsSection(){
  return `<section class="section-shell reviews-section" id="reviews"><div class="section-head"><div><span class="eyebrow">VERIFIED CUSTOMER REVIEWS</span><h2>Trusted by couples worldwide.</h2></div></div><div class="reviews-layout"><div class="reviews-summary-card"><div class="reviews-score-big"><strong>${safe(reviews.average)}</strong><div><span class="stars-gold" aria-label="4.6 out of 5 stars">★★★★★</span><p>Based on ${reviews.total} reviews</p></div></div><div class="reviews-bars">${reviews.distribution.map(r=>`<div class="review-bar-row"><span class="bar-star">${r.stars} ★</span><div class="bar-track" aria-hidden="true"><div class="bar-fill" style="width:${r.pct}%"></div></div><span class="bar-pct">${r.pct}% (${r.count})</span></div>`).join('')}</div></div><div class="reviews-list">${reviews.items.map(item=>`<article class="review-card"><div class="review-card-top"><div><strong>${safe(item.author)}</strong><span class="review-verified">Verified Buyer</span></div><time>${safe(item.date)}</time></div><div class="stars-gold" aria-label="${item.stars} out of 5 stars">${'★'.repeat(item.stars)}</div><p>${safe(item.text)}</p></article>`).join('')}</div></div></section>`;
 }
 
+function mensAndWomensVideoSection(editionFilter='All'){
+ const showMens=editionFilter==='All'||editionFilter==='Men’s edition';
+ const showWomens=editionFilter==='All'||editionFilter==='Women’s edition';
+ return `<section class="section-shell editions-video-section" id="editions-films" aria-label="Men’s and Women’s Edition Video Showcase">
+  <div class="section-head">
+   <div>
+    <span class="eyebrow">MEN’S &amp; WOMEN’S EDITION FILMS · BOLD 01 &amp; BLOOM 03</span>
+    <h2>Two worlds of vitality.<br>Crafted for him &amp; for her.</h2>
+    <p class="section-intro">Experience the obsidian-and-gold ritual of BOLD 01 in our Men’s Section and the rose-gold elegance of BLOOM 03 in our Women’s Section.</p>
+   </div>
+  </div>
+  <div class="editions-video-grid ${showMens&&showWomens?'two-col':'one-col'}">
+   ${showMens?`<article class="edition-video-card mens-edition-card" id="mens-section">
+    <div class="edition-video-stage">
+     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/bold-mens-poster.webp" aria-label="BOLD 01 Men’s Edition ritual video">
+      <source src="/assets/bold-mens.mp4" type="video/mp4">
+     </video>
+     <img class="showcase-poster-fallback" src="/assets/bold-mens-poster.webp" alt="Hands opening the sealed gold inner sachet of VORALEAF BOLD 01 Men’s Edition" width="1280" height="720">
+     <div class="edition-video-overlay">
+      <span class="edition-video-badge">MEN’S SECTION · BOLD 01 &amp; EMBER 02</span>
+      <div class="edition-video-ctrls">
+       <button type="button" class="hero-ctrl-btn media-play-toggle" aria-label="Pause Men’s Edition video" aria-pressed="false">⏸ Pause</button>
+       <button type="button" class="hero-ctrl-btn media-mute-toggle" aria-label="Unmute Men’s Edition video audio" aria-pressed="false">🔇 Audio</button>
+       <button type="button" class="hero-ctrl-btn open-cinema-film" data-film-idx="1" aria-label="Open Men’s Edition film in Cinema Theatre">⛶ Theatre</button>
+      </div>
+     </div>
+    </div>
+    <div class="edition-video-body">
+     <span class="eyebrow">MEN’S VITALITY SECTION · SEALED GOLD SACHET</span>
+     <h3>BOLD 01 &amp; EMBER 02 — Men’s Edition</h3>
+     <p>Obsidian black and champagne gold meet freeze-dried Tongkat Ali, Panax Ginseng and Mixed African Roots Bitter Herbs. Designed to fuel men’s stamina, circulation and 48-hour confidence from the first morning cup.</p>
+     <div class="edition-video-actions">
+      <a class="button" href="/products/bold" data-link>Explore BOLD 01 ${arrow}</a>
+      <a class="button outline" href="/products/ember" data-link>Explore EMBER 02 ${arrow}</a>
+     </div>
+    </div>
+   </article>`:''}
+   ${showWomens?`<article class="edition-video-card womens-edition-card" id="womens-section">
+    <div class="edition-video-stage">
+     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/bloom-womens-poster.webp" aria-label="BLOOM 03 Women’s Edition ritual video">
+      <source src="/assets/bloom-womens.mp4" type="video/mp4">
+     </video>
+     <img class="showcase-poster-fallback" src="/assets/bloom-womens-poster.webp" alt="Opening the rose-gold inner sachet of VORALEAF BLOOM 03 Women’s Edition" width="1280" height="720">
+     <div class="edition-video-overlay">
+      <span class="edition-video-badge">WOMEN’S SECTION · BLOOM 03</span>
+      <div class="edition-video-ctrls">
+       <button type="button" class="hero-ctrl-btn media-play-toggle" aria-label="Pause Women’s Edition video" aria-pressed="false">⏸ Pause</button>
+       <button type="button" class="hero-ctrl-btn media-mute-toggle" aria-label="Unmute Women’s Edition video audio" aria-pressed="false">🔇 Audio</button>
+       <button type="button" class="hero-ctrl-btn open-cinema-film" data-film-idx="2" aria-label="Open Women’s Edition film in Cinema Theatre">⛶ Theatre</button>
+      </div>
+     </div>
+    </div>
+    <div class="edition-video-body">
+     <span class="eyebrow">WOMEN’S VITALITY SECTION · ROSE-GOLD SACHET</span>
+     <h3>BLOOM 03 — Women’s Edition</h3>
+     <p>Presented in soft ivory and mulberry with a signature rose-gold metallic inner pouch. Formulated with the same botanical and African bitter roots complex to uplift mood, energy and shared intimacy.</p>
+     <div class="edition-video-actions">
+      <a class="button" href="/products/bloom" data-link>Explore BLOOM 03 ${arrow}</a>
+      <a class="button outline" href="/collection" data-link>View Multipack Bundles ${arrow}</a>
+     </div>
+    </div>
+   </article>`:''}
+  </div>
+ </section>`;
+}
+
+function intimateSection(){
+ return `<section class="section-shell intimate-campaign-section" id="intimate" aria-label="Intimate Connection and Brand Advertising Campaign">
+  <div class="intimate-campaign-shell">
+   <div class="intimate-campaign-copy">
+    <span class="eyebrow">INTIMATE CONNECTION &amp; BRAND ADVERTISING</span>
+    <h2>Confidence that carries into every <em>intimate</em> moment.</h2>
+    <p class="intimate-lead">From social lounges and barbershop conversations to quiet evenings for two—VORALEAF is built for lasting presence, desire and 48-hour confidence.</p>
+    <p>Our official brand advertising film celebrates modern relationships, shared vitality and the unmistakable confidence of BOLD 01, EMBER 02 and BLOOM 03. Whether you are reconnecting with your long-term partner or sharing the VORALEAF story as a creator or retail partner, every sachet delivers consistent botanical support.</p>
+    <div class="intimate-pillars">
+     <div class="intimate-pillar">
+      <strong>01 · Intimate Bond &amp; 48-Hour Stamina</strong>
+      <span>Supports healthy circulation, libido and energy so couples stay connected and confident for up to two days.</span>
+     </div>
+     <div class="intimate-pillar">
+      <strong>02 · Social &amp; Lounge Advertising</strong>
+      <span>A conversation-starting presentation in obsidian black, oxblood and rose gold—crafted for premium lifestyle and social campaigns.</span>
+     </div>
+     <div class="intimate-pillar">
+      <strong>03 · Creator &amp; Wholesale Ready</strong>
+      <span>Pair our campaign film with the VORALEAF Creator Studio or order 1, 4, 12 and 20-box multipacks for UK &amp; international distribution.</span>
+     </div>
+    </div>
+    <div class="intimate-cta-row">
+     <a class="button light" href="/collection" data-link>Shop the Collection ${arrow}</a>
+     <a class="button outline light-outline" href="/studio" data-link>Creator &amp; Ad Studio ${arrow}</a>
+     <button type="button" class="button outline light-outline open-cinema-film" data-film-idx="4">Watch Full Campaign ⛶</button>
+    </div>
+   </div>
+   <div class="intimate-campaign-media">
+    <div class="intimate-video-frame">
+     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/intimate-poster.webp" aria-label="VORALEAF Intimate Connection and Brand Advertising video">
+      <source src="/assets/intimate.mp4" type="video/mp4">
+     </video>
+     <img class="showcase-poster-fallback" src="/assets/intimate-poster.webp" alt="VORALEAF Intimate and Brand Advertising Campaign showcase" width="1280" height="720">
+     <div class="edition-video-overlay">
+      <span class="edition-video-badge">INTIMATE &amp; ADVERTISING CAMPAIGN · 00:30</span>
+      <div class="edition-video-ctrls">
+       <button type="button" class="hero-ctrl-btn media-play-toggle" aria-label="Pause Intimate campaign video" aria-pressed="false">⏸ Pause</button>
+       <button type="button" class="hero-ctrl-btn media-mute-toggle" aria-label="Unmute Intimate campaign audio" aria-pressed="false">🔇 Audio</button>
+       <button type="button" class="hero-ctrl-btn open-cinema-film" data-film-idx="4" aria-label="Open Intimate campaign in Cinema Theatre">⛶ Theatre</button>
+      </div>
+     </div>
+    </div>
+    <p class="intimate-caption">OFFICIAL CAMPAIGN FILM · FEATURING BOLD 01, EMBER 02 &amp; BLOOM 03 IN SOCIAL &amp; INTIMATE SETTINGS</p>
+   </div>
+  </div>
+ </section>`;
+}
+
+function workoutFeatureSection(){
+ return `<section class="section-shell movement-feature workout-video-feature" id="workout-area">
+  <div class="workout-video-stage">
+   <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp" aria-label="VORALEAF Workout & Active Ritual showcase video">
+    <source src="/assets/hero-workout.mp4" type="video/mp4">
+   </video>
+   <img class="showcase-poster-fallback" src="/assets/hero-workout-poster.webp" alt="A couple preparing VORALEAF BOLD 01 and BLOOM 03 in a sunlit workout studio" width="1280" height="720">
+   <div class="edition-video-overlay">
+    <span class="edition-video-badge">WORKOUT &amp; MOVEMENT AREA · 00:30</span>
+    <div class="edition-video-ctrls">
+     <button type="button" class="hero-ctrl-btn media-play-toggle" aria-label="Pause Workout video" aria-pressed="false">⏸ Pause</button>
+     <button type="button" class="hero-ctrl-btn media-mute-toggle" aria-label="Unmute Workout video audio" aria-pressed="false">🔇 Audio</button>
+     <button type="button" class="hero-ctrl-btn open-cinema-film" data-film-idx="3" aria-label="Open Workout film in Cinema Theatre">⛶ Theatre</button>
+    </div>
+   </div>
+  </div>
+  <div>
+   <span class="eyebrow">WORKOUT AREA · MOVE &amp; UNWIND</span>
+   <h2>Life moves.<br>Fuel your rhythm.</h2>
+   <p>From morning studio sessions to active recovery together—experience how BOLD 01 and BLOOM 03 fit naturally into your movement and gym routine.</p>
+   <div class="edition-video-actions">
+    <a class="button" href="/fitness" data-link>Explore gym &amp; exercises ${arrow}</a>
+    <a class="button outline" href="/movement" data-link>Mindful movement timer ${arrow}</a>
+   </div>
+  </div>
+ </section>`;
+}
+
 function home(){
- return `<section class="hero"><div class="hero-media"><video id="hero-video" class="hero-bg-video" playsinline muted loop autoplay preload="metadata" poster="/assets/coffee-hero.webp" aria-label="VORALEAF coffee ritual video scenes in morning light"><source src="/assets/ritual-motion-study.mp4" type="video/mp4"></video><img class="hero-bg" src="/assets/coffee-hero.webp" alt="A stream of coffee pouring into a forest-green ceramic cup in warm morning light" width="1672" height="941" fetchpriority="high"></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY & INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s & partners’ vitality coffee to support energy, desire and intimacy in long-term love. Fuel the long-term bond with reliable stamina that lasts up to 48 hours.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><button class="watch-button" id="play-film"><span class="play-disc">▶</span>Watch the ritual</button></div></div><div class="hero-scene-bar" role="toolbar" aria-label="Coffee ritual video scenes"><div class="hero-scene-info"><span class="hero-scene-tag" id="hero-scene-tag">SCENE 01 / 07</span><span class="hero-scene-name" id="hero-scene-name">${scenes[0].title}</span><span class="hero-scene-time" id="hero-scene-time">00:00 / 00:24</span></div><div class="hero-scene-pills" role="tablist" aria-label="Jump to coffee ritual scene">${scenes.map((s,i)=>`<button type="button" class="hero-scene-pill ${i===0?'active':''}" data-scene-idx="${i}" aria-label="Jump to ${s.num} ${s.title}" aria-pressed="${i===0}"><span class="scene-num">${s.num}</span><span class="scene-label">${s.title}</span></button>`).join('')}</div><div class="hero-scene-actions"><button type="button" class="hero-ctrl-btn" id="hero-video-toggle" aria-label="Pause background video" aria-pressed="false"><span aria-hidden="true">⏸</span> <span>Pause</span></button><button type="button" class="hero-ctrl-btn" id="hero-sound-toggle" aria-label="Toggle ambient ritual soundtrack" aria-pressed="false"><span aria-hidden="true">♪</span> <span>Soundtrack</span></button></div></div><div class="hero-caption"><span>INSTANT COFFEE WITH BOTANICALS & AFRICAN BITTER ROOTS</span><span>AN ORIGINAL VORALEAF VISUAL STORY · 01 / 07 SCENES</span></div></section>
+ const curFilm=heroPlaylist[heroVideoIdx]||heroPlaylist[0];
+ return `<section class="hero"><div class="hero-media"><video id="hero-video" class="hero-bg-video" playsinline muted autoplay preload="metadata" poster="/assets/coffee-hero.webp" aria-label="VORALEAF 5-video infinite hero showcase"><source src="${curFilm.src}" type="video/mp4"></video><img class="hero-bg" src="/assets/coffee-hero.webp" alt="Hands opening the VORALEAF BOLD 01 box to reveal a sealed gold sachet in warm morning light" width="1280" height="720" fetchpriority="high"></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY &amp; INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s &amp; partners’ vitality coffee to support energy, desire and intimacy in long-term love. Watch all 5 VORALEAF films in an infinite loop.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><button class="watch-button" id="play-film"><span class="play-disc">▶</span>Watch 5-film reel</button></div></div><div class="hero-scene-bar" role="toolbar" aria-label="Hero 5-video infinite loop controls"><div class="hero-scene-info"><span class="hero-scene-tag" id="hero-scene-tag">FILM ${curFilm.num} / 05 · INFINITE LOOP</span><span class="hero-scene-name" id="hero-scene-name">${safe(curFilm.title)}</span><span class="hero-scene-time" id="hero-scene-time">00:00 / 00:${String(curFilm.duration).padStart(2,'0')}</span></div><div class="hero-scene-pills" role="tablist" aria-label="Switch video in 5-film infinite hero loop">${heroPlaylist.map((v,i)=>`<button type="button" class="hero-scene-pill ${i===heroVideoIdx?'active':''}" data-hero-idx="${i}" aria-label="Play Film ${v.num}: ${safe(v.title)}" aria-pressed="${i===heroVideoIdx}"><span class="scene-num">${v.num}</span><span class="scene-label">${safe(v.shortTitle)}</span></button>`).join('')}</div><div class="hero-scene-actions"><button type="button" class="hero-ctrl-btn" id="hero-video-toggle" aria-label="Pause background video" aria-pressed="false"><span aria-hidden="true">⏸</span> <span>Pause</span></button><button type="button" class="hero-ctrl-btn" id="hero-mute-toggle" aria-label="Unmute hero video audio" aria-pressed="false"><span aria-hidden="true">🔇</span> <span>Video Audio</span></button><button type="button" class="hero-ctrl-btn" id="hero-sound-toggle" aria-label="Toggle ambient ritual soundtrack" aria-pressed="false"><span aria-hidden="true">♪</span> <span>Score</span></button></div></div><div class="hero-caption"><span>5-VIDEO INFINITE HERO LOOP · HERO · BOLD MEN’S · BLOOM WOMEN’S · WORKOUT · INTIMATE</span><span>VORALEAF ROOTS HERBAL COFFEE · UK EDITION</span></div></section>
 ${trustStripSection()}
 <section class="section-shell"><div class="section-head"><div><span class="eyebrow">THE COLLECTION</span><h2>Three editions. One signature vitality formula.</h2></div><a class="text-link" href="/collection" data-link>Explore all editions ↗</a></div><div class="collection-grid">${products.map(productCard).join('')}</div></section>
+${mensAndWomensVideoSection('All')}
 ${featuredBundlesSection()}
+${intimateSection()}
 ${aboutVitalitySection()}
 ${benefitsSection()}
 ${ingredientsSection()}
@@ -133,8 +279,8 @@ ${reviewsSection()}
 <section class="section-shell pack-story"><div class="pack-story-stage"><div class="pack-story-media"><video id="pack-scene-video" class="pack-scene-video" playsinline muted loop preload="none" poster="/assets/packaging/sachets-triptych.webp"><source src="/assets/ritual-motion-study.mp4" type="video/mp4"></video><img id="pack-scene-img" src="/assets/packaging/sachets-triptych.webp" alt="Three VORALEAF paper envelopes with separate gold and rose-gold inner sachets" width="1536" height="1024"><div class="pack-scene-overlay"><span class="pack-scene-badge" id="pack-scene-badge">SCENE 02 · 00:03 - 00:06</span><button type="button" class="pack-scene-play-btn" id="pack-scene-toggle" aria-label="Play sachet reveal scene"><span class="play-disc" aria-hidden="true">▶</span><span class="pack-play-label">Watch the reveal</span></button></div></div><div class="pack-scene-selector" role="tablist" aria-label="Select packaging ritual scene"><button type="button" class="pack-tab active" data-pack-tab="still" aria-pressed="true">Still Photography</button><button type="button" class="pack-tab" data-pack-tab="sachet" data-seek="3" aria-pressed="false">Scene 02 · Sachet Reveal</button><button type="button" class="pack-tab" data-pack-tab="pour" data-seek="9" aria-pressed="false">Scene 04 · Water Pour</button></div></div><div><span class="eyebrow">THE TWO-PART SERVING PACK</span><h2>A little reveal.<br>A moment to savour.</h2><p>Open the illustrated paper envelope to find your individually sealed inner pouch. Gold for BOLD and EMBER. Rose gold for BLOOM.</p><p>Each 15 g sachet blends smooth coffee with freeze-dried Tongkat Ali, Panax Ginseng, Dong Quai, Jujube and Mixed African Roots Bitter Herbs—ready in seconds with 150–180 ml hot water.</p><a class="text-link" href="/collection" data-link>Shop the collection ↗</a></div></section>
 <section class="editorial-split"><div class="editorial-photo"><img src="/assets/together.webp" alt="A relaxed couple enjoying coffee and a conversation on a coastal terrace" width="768" height="650"></div><div class="editorial-copy"><span class="eyebrow">MORE THAN A COFFEE MOMENT</span><h2>A little pause.<br>A little presence.<br>A little <em>you.</em></h2><p>For quiet mornings, conversations that linger and the moments between everything else. Rejuvenate passion, energy and intimacy in long-term love.</p><a class="text-link" href="/journal/time-together" data-link>Find inspiration in the journal ↗</a><div class="ritual-line"><span>01</span> Open. Pour. Make it yours.</div></div></section>
 <section class="section-shell"><div class="section-head"><div><span class="eyebrow">THE VORALEAF JOURNAL</span><h2>Stories to come back to.</h2></div><a class="text-link" href="/journal" data-link>Explore the journal ↗</a></div><div class="journal-grid">${[articles[0],articles[1],articles[2]].map(articleCard).join('')}</div></section>
-<div class="marquee">ROOTED IN RITUAL. <span>48-Hour Vitality & Confidence.</span> VORALEAF.</div>
-<section class="section-shell movement-feature"><img src="/assets/move.webp" alt="A woman enjoying a relaxed moment in a light-filled movement studio" width="600" height="600"><div><span class="eyebrow">MOVE & UNWIND</span><h2>Life moves.<br>Find your rhythm.</h2><p>A little movement. A change of scene. A moment to enjoy being here. Explore ideas for your own everyday, at your own pace.</p><a class="button outline" href="/fitness" data-link>Explore gym & exercises ${arrow}</a></div></section>
+<div class="marquee">ROOTED IN RITUAL. <span>48-Hour Vitality &amp; Confidence.</span> VORALEAF.</div>
+${workoutFeatureSection()}
 <section class="creator-banner"><div><span class="eyebrow">THE CREATOR STUDIO</span><h2>Your ritual.<br>Your story.</h2><p>Record your next coffee story, find its soundtrack or rehearse your words. Verified customers can also share with members and go live when publishing services are available.</p><a class="text-link" href="/studio" data-link>Step into the studio ↗</a></div><div class="creator-visual" aria-hidden="true"><div class="phone-mock"></div><span class="studio-caption">OPEN.<br>CREATE.<br>MAKE IT YOURS.</span></div></section>
 <section class="newsletter"><div><span class="eyebrow">A MOMENT THAT FITS YOU</span><h2>Where will your ritual take you?</h2><p>Find an edition by its visual character and the moments you love.</p></div><button class="button" id="open-finder">Find my ritual ${arrow}</button></section>`;
 }
@@ -143,7 +289,9 @@ function collection(){
  return `${intro('ROOTS HERBAL COFFEE · BIO HERBS VITALITY BLEND','The collection.','Three distinctive presentations sharing our white-label botanical coffee formula—featuring water-soluble freeze-dried Tongkat Ali, Ginseng, Dong Quai, Jujube and Mixed African Roots Bitter Herbs.')}
 ${trustStripSection()}
 <section class="section-shell collection-page"><div class="filters" aria-label="Filter editions">${['All','Men’s edition','Women’s edition'].map(x=>`<button class="filter product-filter ${filter===x?'active':''}" data-filter="${x}" aria-pressed="${filter===x}">${x==='All'?'All editions':x}</button>`).join('')}</div><div class="collection-grid">${products.filter(p=>filter==='All'||p.edition===filter).map(productCard).join('')}</div><p class="collection-note">Available in 6 × 15 g (90 g) standard boxes or 10 × 10 g (100 g) format. Multipack bundles (1, 4, 12 or 20 boxes) ship across the UK with secure PayPal and Stripe checkout.</p></section>
+${mensAndWomensVideoSection(filter)}
 ${featuredBundlesSection()}
+${intimateSection()}
 ${benefitsSection()}
 ${ingredientsSection()}
 ${certificationsSection()}
@@ -185,9 +333,11 @@ function product(id){
    <details><summary>Manufacturer &amp; Certifications</summary><p>${safe(certifications.manufacturer)} Certified under <strong>GMP</strong> (Good Manufacturing Practice), <strong>HACCP</strong> (Hazard Analysis &amp; Critical Control Points), <strong>HALAL</strong>, and <strong>ISO 9001:2000</strong> Quality Management.</p></details>
    <details><summary>Safety &amp; Responsible Use</summary><p>${safe(certifications.disclaimer)} Ginseng may influence blood sugar and clotting; Dong quai can interact with blood-thinning medicines (such as warfarin). Consult a doctor before use if pregnant, nursing, or managing heart or blood-pressure conditions.</p></details>
   </div>
-  <div class="product-ritual-scene" data-product="${p.id}"><div class="scene-header"><div><span class="eyebrow">${p.name} RITUAL · VIDEO SCENE PREVIEW</span><h3>The ${p.name} Serving Moment</h3></div><span class="edition-pouch-badge">${p.pouch} inner pouch</span></div><div class="product-video-card"><video class="product-video" playsinline muted loop preload="none" poster="/assets/packaging/roots-${p.id}-${format}.webp"><source src="/assets/ritual-motion-study.mp4" type="video/mp4"></video><div class="product-video-controls"><button type="button" class="button small product-video-toggle" aria-label="Play ${p.name} ritual scene"><span aria-hidden="true">▶</span> Play ritual scene</button><div class="product-scene-cues"><button type="button" class="scene-cue-chip active" data-cue="3" aria-label="Step 1: Reveal sachet">1. Reveal sachet (03s)</button><button type="button" class="scene-cue-chip" data-cue="6" aria-label="Step 2: Dispense granules">2. Dispense (06s)</button><button type="button" class="scene-cue-chip" data-cue="9" aria-label="Step 3: Pour water">3. Water pour (09s)</button><button type="button" class="scene-cue-chip" data-cue="14" aria-label="Step 4: Slow stir">4. Slow stir (14s)</button></div></div><p class="scene-caption">${p.id==='bloom'?'BLOOM 03 pairs an ivory paper envelope with a distinctive ROSE GOLD metallic inner pouch. Watch the slow reveal, pour and stir.':p.name+' '+p.number+' pairs its botanical paper envelope with a sealed yellow-gold inner pouch. Watch the slow reveal, pour and stir.'}</p></div></div>
+  <div class="product-ritual-scene" data-product="${p.id}"><div class="scene-header"><div><span class="eyebrow">${p.edition.toUpperCase()} FILM · ${p.name} ${p.number}</span><h3>The ${p.name} Serving Moment (${p.id==='bloom'?'Women’s Section':'Men’s Section'})</h3></div><span class="edition-pouch-badge">${p.pouch} inner pouch</span></div><div class="product-video-card"><video class="product-video" playsinline muted loop autoplay preload="metadata" poster="${p.id==='bloom'?'/assets/bloom-womens-poster.webp':'/assets/bold-mens-poster.webp'}"><source src="${p.id==='bloom'?'/assets/bloom-womens.mp4':'/assets/bold-mens.mp4'}" type="video/mp4"></video><div class="product-video-controls"><button type="button" class="button small product-video-toggle" aria-label="Pause ${p.name} ritual scene"><span aria-hidden="true">⏸</span> Pause ritual scene</button><button type="button" class="button outline small product-video-mute" aria-label="Unmute ${p.name} ritual audio">🔇 Unmute audio</button><div class="product-scene-cues"><button type="button" class="scene-cue-chip active" data-cue="0" aria-label="Step 1: Opening">1. Opening (00s)</button><button type="button" class="scene-cue-chip" data-cue="4" aria-label="Step 2: Sachet reveal">2. Sachet reveal (04s)</button><button type="button" class="scene-cue-chip" data-cue="8" aria-label="Step 3: Pour &amp; prepare">3. Pour &amp; prepare (08s)</button><button type="button" class="scene-cue-chip" data-cue="12" aria-label="Step 4: Serving moment">4. Serving moment (12s)</button></div></div><p class="scene-caption">${p.id==='bloom'?'BLOOM 03 (Women’s Section film) pairs an ivory paper envelope with a distinctive ROSE GOLD metallic inner pouch.':p.name+' '+p.number+' (Men’s Section film) pairs its botanical paper envelope with a sealed yellow-gold inner pouch.'}</p></div></div>
  </div>
 </section>
+${mensAndWomensVideoSection(p.edition)}
+${intimateSection()}
 ${benefitsSection()}
 ${ingredientsSection()}
 ${certificationsSection()}
@@ -218,7 +368,7 @@ function article(id){
 }
 
 function movement(){
- return `${intro('MOVE & UNWIND','Find your own rhythm.','Ideas for a change of scene, a little movement and time to enjoy the everyday. This is lifestyle inspiration, separate from product benefits.')}<section class="section-shell movement-feature" style="padding-top:10px"><img src="/assets/strength.webp" alt="A man taking a comfortable pause between sets in a sunlit gym" width="600" height="550"><div><span class="eyebrow">A LITTLE SPACE FOR YOU</span><h2>Start with<br>what you enjoy.</h2><p>A walk. Your favourite class. A quiet corner. There are many ways to make space in your day. Let your interests lead, and choose activities that suit your circumstances.</p><a class="button outline" href="/journal/move-at-your-pace" data-link>Read the movement story ${arrow}</a></div></section><section class="section-shell" style="padding-top:0"><div class="movement-cards">${[['01','A change of scene','Take your moment somewhere new: a nearby garden, a light-filled room or a familiar path.','/journal/a-desk-side-pause'],['02','Movement you enjoy','Explore your own pace. Plan a routine with qualified guidance if you need a programme suited to you.','/journal/move-at-your-pace'],['03','A shared moment','Set a table for two, make time for a conversation and leave the to-do list for a little later.','/journal/time-together']].map(([n,h,p,url])=>`<article class="movement-card"><span class="number">${n}</span><h3>${h}</h3><p>${p}</p><a data-link class="text-link" href="${url}">Explore the story ↗</a></article>`).join('')}</div><p><a class="button outline" href="/fitness" data-link>Explore the interactive exercise library ${arrow}</a></p><div class="timer" id="movement-timer"><div class="timer-video-backdrop" aria-hidden="true"><video id="timer-bg-video" playsinline muted loop preload="none" poster="/assets/coffee-hero.webp"><source src="/assets/ritual-motion-study.mp4" type="video/mp4"></video></div><div class="timer-content" style="position:relative;z-index:2"><span class="eyebrow">THE QUIET CORNER · MINDFUL PAUSE</span><h3>Two minutes. Just for you.</h3><p>A simple pause timer accompanied by calming coffee ritual visuals. Make it yours.</p><div class="timer-modes"><label class="timer-mode-check"><input type="checkbox" id="timer-visual-toggle"> Soothing ritual video</label><label class="timer-mode-check"><input type="checkbox" id="timer-audio-toggle"> Ambient track (Meadow)</label></div></div><span class="timer-clock" id="timer-clock" role="timer" style="position:relative;z-index:2">02:00</span><div style="position:relative;z-index:2"><button class="button light" id="timer-toggle">Start my pause</button><button class="text-button" id="timer-reset" style="color:var(--cream);display:block;margin-top:15px">Reset</button></div></div><p class="collection-note">Persistent tiredness or unusual breathlessness deserves appropriate medical advice. Coffee is not a treatment for these symptoms.</p></section>`;
+ return `${intro('MOVE & UNWIND · WORKOUT AREA','Find your own rhythm.','Ideas for a change of scene, workout preparation, a little movement and time to enjoy the everyday. This is lifestyle inspiration, separate from product benefits.')}${workoutFeatureSection()}<section class="section-shell" style="padding-top:0"><div class="movement-cards">${[['01','A change of scene','Take your moment somewhere new: a nearby garden, a light-filled room or a familiar path.','/journal/a-desk-side-pause'],['02','Movement you enjoy','Explore your own pace. Plan a routine with qualified guidance if you need a programme suited to you.','/journal/move-at-your-pace'],['03','A shared moment','Set a table for two, make time for a conversation and leave the to-do list for a little later.','/journal/time-together']].map(([n,h,p,url])=>`<article class="movement-card"><span class="number">${n}</span><h3>${h}</h3><p>${p}</p><a data-link class="text-link" href="${url}">Explore the story ↗</a></article>`).join('')}</div><p><a class="button outline" href="/fitness" data-link>Explore the interactive exercise library ${arrow}</a></p><div class="timer" id="movement-timer"><div class="timer-video-backdrop" aria-hidden="true"><video id="timer-bg-video" playsinline muted loop preload="none" poster="/assets/hero-workout-poster.webp"><source src="/assets/hero-workout.mp4" type="video/mp4"></video></div><div class="timer-content" style="position:relative;z-index:2"><span class="eyebrow">THE QUIET CORNER · MINDFUL PAUSE</span><h3>Two minutes. Just for you.</h3><p>A simple pause timer accompanied by calming coffee ritual visuals. Make it yours.</p><div class="timer-modes"><label class="timer-mode-check"><input type="checkbox" id="timer-visual-toggle"> Soothing workout &amp; ritual video</label><label class="timer-mode-check"><input type="checkbox" id="timer-audio-toggle"> Ambient track (Meadow)</label></div></div><span class="timer-clock" id="timer-clock" role="timer" style="position:relative;z-index:2">02:00</span><div style="position:relative;z-index:2"><button class="button light" id="timer-toggle">Start my pause</button><button class="text-button" id="timer-reset" style="color:var(--cream);display:block;margin-top:15px">Reset</button></div></div><p class="collection-note">Persistent tiredness or unusual breathlessness deserves appropriate medical advice. Coffee is not a treatment for these symptoms.</p></section>`;
 }
 
 function bagPage(){
@@ -302,6 +452,8 @@ function contact(){
 function about(){
  return `${intro('OUR WORLD','Rooted in ritual.','VORALEAF brings botanical-inspired presentation to a proven vitality instant coffee formula, with illustrated paper envelopes and distinctive metallic inner sachets.')}
 <img src="/assets/collection.webp" class="full-image" alt="BOLD and EMBER with gold inner sachets; BLOOM with rose-gold inner sachets" width="1600" height="1067">
+${mensAndWomensVideoSection('All')}
+${intimateSection()}
 ${aboutVitalitySection()}
 ${benefitsSection()}
 ${ingredientsSection()}
@@ -342,6 +494,7 @@ function render({keepScroll=false}={}){
  let html,title;
  if(path==='/'){html=home();title='Vitality Roots Herbal Coffee · Make room for your moment'}
  else if(path==='/collection'){html=collection();title='The Collection & Multipack Bundles'}
+ else if(path==='/intimate'){html=`${intro('INTIMATE CONNECTION & BRAND ADVERTISING','Confidence for every intimate moment.','Our official brand advertising showcase celebrating modern love, 48-hour vitality and the shared ritual of BOLD 01, EMBER 02 and BLOOM 03.')}${intimateSection()}${mensAndWomensVideoSection('All')}${featuredBundlesSection()}`;title='Intimate Connection & Brand Advertising'}
  else if(path.startsWith('/products/')){const id=path.split('/')[2];const prod=products.find(p=>p.id===id);html=product(id);title=prod?`${prod.name} ${prod.number} · Roots Herbal Coffee`:'Edition'}
  else if(path==='/journal'){html=journal();title='The Journal'}
  else if(path.startsWith('/journal/')){const id=path.split('/')[2];html=article(id);title=articles.find(a=>a.id===id)?.title||'Story'}
@@ -381,8 +534,37 @@ function addBundleToBag(editionId,boxCount,packFmt=format){
 function bindPage(){
  $$('.gallery-thumb').forEach(button=>button.onclick=()=>{const gallery=button.closest('[data-gallery]');const photos=galleryPhotos(products.find(p=>p.id===gallery.dataset.gallery));const selected=photos[Number(button.dataset.photo)];if(!selected)return;$('.gallery-main',gallery).src=selected[0];$('.gallery-main',gallery).alt=selected[1];$('.gallery-full',gallery).href=selected[0];$('.gallery-caption',gallery).textContent=selected[1];$$('.gallery-thumb',gallery).forEach(b=>{const active=b===button;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))})});
 
- $$('#play-film').forEach(b=>b.onclick=()=>{$('#film-dialog').showModal();const f=$('#ritual-film');if(f){f.currentTime=0;f.play().catch(()=>{})}});
+ $$('#play-film').forEach(b=>b.onclick=()=>{openCinemaFilm(heroVideoIdx)});
+ $$('.open-cinema-film').forEach(b=>b.onclick=()=>{openCinemaFilm(Number(b.dataset.filmIdx)||0)});
  $$('#open-finder').forEach(b=>b.onclick=()=>finder(0));
+
+ // Section video controls (Men's BOLD, Women's BLOOM, Workout, Intimate)
+ $$('.media-play-toggle').forEach(btn=>{
+  btn.onclick=()=>{
+   const stage=btn.closest('.edition-video-stage,.intimate-video-frame,.workout-video-stage');
+   const vid=stage?.querySelector('video');
+   if(!vid)return;
+   if(vid.paused){
+    vid.play().catch(()=>{});
+    btn.textContent='⏸ Pause';
+    btn.setAttribute('aria-pressed','false');
+   }else{
+    vid.pause();
+    btn.textContent='▶ Play';
+    btn.setAttribute('aria-pressed','true');
+   }
+  };
+ });
+ $$('.media-mute-toggle').forEach(btn=>{
+  btn.onclick=()=>{
+   const stage=btn.closest('.edition-video-stage,.intimate-video-frame,.workout-video-stage');
+   const vid=stage?.querySelector('video');
+   if(!vid)return;
+   vid.muted=!vid.muted;
+   btn.textContent=vid.muted?'🔇 Audio':'🔊 Audio On';
+   btn.setAttribute('aria-pressed',String(!vid.muted));
+  };
+ });
 
  // Bundle edition switcher on Home/Collection
  $$('.bundle-edition-btn').forEach(btn=>{
@@ -436,31 +618,46 @@ function bindPage(){
   };
  });
 
- // Hero video & scene pill controls
+ // Hero 5-video infinite loop & pill controls
  const heroVid=$('#hero-video');
  const heroPlayBtn=$('#hero-video-toggle');
+ const heroMuteBtn=$('#hero-mute-toggle');
  const heroSoundBtn=$('#hero-sound-toggle');
  const heroPills=$$('.hero-scene-pill');
  const heroSceneTag=$('#hero-scene-tag');
  const heroSceneName=$('#hero-scene-name');
  const heroSceneTime=$('#hero-scene-time');
- if(heroVid){
+ if(heroVid&&heroPlaylist?.length){
   function fmt(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
-  heroVid.ontimeupdate=()=>{
-   const t=heroVid.currentTime;
-   let idx=0;
-   for(let i=0;i<scenes.length;i++){
-    if(t>=scenes[i].start-0.25&&t<scenes[i].end){idx=i;break}
-   }
-   const cur=scenes[idx];
-   if(heroSceneTag)heroSceneTag.textContent=`SCENE ${cur.num} / 07`;
+  function loadHeroFilm(idx){
+   heroVideoIdx=((idx%heroPlaylist.length)+heroPlaylist.length)%heroPlaylist.length;
+   const cur=heroPlaylist[heroVideoIdx];
+   if(!cur)return;
+   if(heroSceneTag)heroSceneTag.textContent=`FILM ${cur.num} / 05 · INFINITE LOOP`;
    if(heroSceneName)heroSceneName.textContent=cur.title;
-   if(heroSceneTime)heroSceneTime.textContent=`${fmt(t)} / 00:24`;
+   if(heroSceneTime)heroSceneTime.textContent=`00:00 / ${fmt(cur.duration||30)}`;
    heroPills.forEach((p,i)=>{
-    const active=i===idx;
+    const active=i===heroVideoIdx;
     p.classList.toggle('active',active);
     p.setAttribute('aria-pressed',String(active));
    });
+   heroVid.poster=cur.poster;
+   heroVid.src=cur.src;
+   heroVid.load();
+   heroVid.play().catch(()=>{});
+   if(heroPlayBtn){
+    heroPlayBtn.innerHTML='<span aria-hidden="true">⏸</span> <span>Pause</span>';
+    heroPlayBtn.setAttribute('aria-label','Pause background video');
+    heroPlayBtn.setAttribute('aria-pressed','false');
+   }
+  }
+  heroVid.onended=()=>{
+   loadHeroFilm(heroVideoIdx+1);
+  };
+  heroVid.ontimeupdate=()=>{
+   const cur=heroPlaylist[heroVideoIdx]||heroPlaylist[0];
+   const dur=Number.isFinite(heroVid.duration)&&heroVid.duration>0?heroVid.duration:(cur?.duration||30);
+   if(heroSceneTime)heroSceneTime.textContent=`${fmt(heroVid.currentTime)} / ${fmt(dur)}`;
   };
   if(heroPlayBtn){
    heroPlayBtn.onclick=()=>{
@@ -475,6 +672,13 @@ function bindPage(){
      heroPlayBtn.setAttribute('aria-label','Play background video');
      heroPlayBtn.setAttribute('aria-pressed','true');
     }
+   };
+  }
+  if(heroMuteBtn){
+   heroMuteBtn.onclick=()=>{
+    heroVid.muted=!heroVid.muted;
+    heroMuteBtn.innerHTML=heroVid.muted?'<span aria-hidden="true">🔇</span> <span>Video Audio</span>':'<span aria-hidden="true">🔊</span> <span>Audio On</span>';
+    heroMuteBtn.setAttribute('aria-pressed',String(!heroVid.muted));
    };
   }
   if(heroSoundBtn){
@@ -496,14 +700,9 @@ function bindPage(){
   }
   heroPills.forEach(pill=>{
    pill.onclick=()=>{
-    const idx=Number(pill.dataset.sceneIdx);
-    const s=scenes[idx];
-    if(!s)return;
-    heroVid.currentTime=s.start;
-    if(heroVid.paused)heroVid.play().catch(()=>{});
-    heroPills.forEach((p,i)=>{const active=i===idx;p.classList.toggle('active',active);p.setAttribute('aria-pressed',String(active))});
-    if(heroSceneTag)heroSceneTag.textContent=`SCENE ${s.num} / 07`;
-    if(heroSceneName)heroSceneName.textContent=s.title;
+    const idx=Number(pill.dataset.heroIdx);
+    if(Number.isNaN(idx))return;
+    loadHeroFilm(idx);
    };
   });
  }
@@ -558,17 +757,25 @@ function bindPage(){
  $$('.product-ritual-scene').forEach(sceneElem=>{
   const pVid=$('video',sceneElem);
   const pToggle=$('.product-video-toggle',sceneElem);
+  const pMute=$('.product-video-mute',sceneElem);
   const cues=$$('.scene-cue-chip',sceneElem);
   if(!pVid)return;
   if(pToggle){
    pToggle.onclick=()=>{
     if(pVid.paused){
      pVid.play().catch(()=>{});
-     pToggle.innerHTML='<span aria-hidden="true">⏸</span> Pause ritual scene';
+     pToggle.innerHTML='<span aria-hidden="true">⏸</span> Pause edition film';
     }else{
      pVid.pause();
-     pToggle.innerHTML='<span aria-hidden="true">▶</span> Play ritual scene';
+     pToggle.innerHTML='<span aria-hidden="true">▶</span> Play edition film';
     }
+   };
+  }
+  if(pMute){
+   pMute.onclick=()=>{
+    pVid.muted=!pVid.muted;
+    pMute.innerHTML=pVid.muted?'<span aria-hidden="true">🔇</span> Audio':'<span aria-hidden="true">🔊</span> Audio On';
+    pMute.setAttribute('aria-pressed',String(!pVid.muted));
    };
   }
   cues.forEach(chip=>{
@@ -576,7 +783,7 @@ function bindPage(){
     const cueTime=Number(chip.dataset.cue);
     pVid.currentTime=cueTime;
     pVid.play().catch(()=>{});
-    if(pToggle)pToggle.innerHTML='<span aria-hidden="true">⏸</span> Pause ritual scene';
+    if(pToggle)pToggle.innerHTML='<span aria-hidden="true">⏸</span> Pause edition film';
     cues.forEach(c=>{const active=c===chip;c.classList.toggle('active',active);c.setAttribute('aria-pressed',String(active))});
    };
   });
@@ -760,6 +967,19 @@ function globalResults(q){
 }
 $('#global-search').oninput=e=>globalResults(e.target.value);
 
+let cinemaFilmIdx=0;
+function openCinemaFilm(idx=0){
+ const dialog=$('#film-dialog');
+ const film=$('#ritual-film');
+ if(!dialog||!film)return;
+ if(!dialog.open)dialog.showModal();
+ if(typeof window.__loadCinemaFilm==='function')window.__loadCinemaFilm(idx);
+ else{
+  film.currentTime=0;
+  film.play().catch(()=>{});
+ }
+}
+
 function setupCinemaModal(){
  const film=$('#ritual-film');
  const playToggle=$('#cinema-play-toggle');
@@ -773,13 +993,14 @@ function setupCinemaModal(){
  const chapterList=$('#cinema-chapter-list');
  if(!film)return;
 
- if(chapterList&&!chapterList.children.length){
-  chapterList.innerHTML=scenes.map((s,i)=>`
-   <button type="button" class="cinema-chapter-btn ${i===0?'active':''}" data-scene="${s.id}" data-start="${s.start}" aria-label="Play Scene ${s.num}: ${safe(s.title)}" aria-pressed="${i===0}">
+ const list=heroPlaylist?.length?heroPlaylist:scenes;
+ if(chapterList){
+  chapterList.innerHTML=list.map((s,i)=>`
+   <button type="button" class="cinema-chapter-btn ${i===0?'active':''}" data-film-idx="${i}" aria-label="Play Film ${s.num}: ${safe(s.title)}" aria-pressed="${i===0}">
     <span class="chap-num">${s.num}</span>
     <div class="chap-info">
      <strong>${safe(s.title)}</strong>
-     <small>${s.subtitle}</small>
+     <small>${safe(s.section||s.subtitle||'')}</small>
     </div>
    </button>
   `).join('');
@@ -787,21 +1008,37 @@ function setupCinemaModal(){
  const chapterBtns=$$('.cinema-chapter-btn');
 
  function fmt(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
- function syncChapter(t){
-  let cur=scenes[0];
-  for(const s of scenes){if(t>=s.start-0.25&&t<s.end){cur=s;break}}
-  if(subtitles)subtitles.textContent=`SCENE ${cur.num} · ${cur.title} — ${cur.words}`;
-  chapterBtns.forEach(btn=>{
-   const active=btn.dataset.scene===cur.id;
+ function loadCinemaIdx(idx){
+  cinemaFilmIdx=((idx%list.length)+list.length)%list.length;
+  const cur=list[cinemaFilmIdx];
+  if(!cur)return;
+  if(subtitles)subtitles.textContent=`FILM ${cur.num} / 05 · ${cur.title} — ${cur.subtitle||cur.words||''}`;
+  chapterBtns.forEach((btn,i)=>{
+   const active=i===cinemaFilmIdx;
    btn.classList.toggle('active',active);
    btn.setAttribute('aria-pressed',String(active));
   });
+  if(cur.src){
+   film.poster=cur.poster||'/assets/hero-poster.webp';
+   film.src=cur.src;
+   film.load();
+   film.play().catch(()=>{});
+  }
  }
- film.onloadedmetadata=()=>{if(scrubber)scrubber.max=String(Math.floor(film.duration||24))};
+ window.__loadCinemaFilm=loadCinemaIdx;
+
+ film.onloadedmetadata=()=>{
+  const cur=list[cinemaFilmIdx];
+  if(scrubber)scrubber.max=String(Math.floor(film.duration||cur?.duration||30));
+ };
+ film.onended=()=>{
+  loadCinemaIdx(cinemaFilmIdx+1);
+ };
  film.ontimeupdate=()=>{
+  const cur=list[cinemaFilmIdx];
+  const dur=Number.isFinite(film.duration)&&film.duration>0?film.duration:(cur?.duration||30);
   if(scrubber&&!scrubber.matches(':active'))scrubber.value=String(film.currentTime);
-  if(timeDisplay)timeDisplay.textContent=`${fmt(film.currentTime)} / ${fmt(film.duration||24)}`;
-  syncChapter(film.currentTime);
+  if(timeDisplay)timeDisplay.textContent=`${fmt(film.currentTime)} / ${fmt(dur)}`;
  };
  film.onplay=()=>{
   if(playLabel)playLabel.textContent='Pause';
@@ -828,9 +1065,10 @@ function setupCinemaModal(){
  }
  if(scrubber){
   scrubber.oninput=()=>{
+   const cur=list[cinemaFilmIdx];
+   const dur=Number.isFinite(film.duration)&&film.duration>0?film.duration:(cur?.duration||30);
    film.currentTime=Number(scrubber.value);
-   if(timeDisplay)timeDisplay.textContent=`${fmt(film.currentTime)} / ${fmt(film.duration||24)}`;
-   syncChapter(film.currentTime);
+   if(timeDisplay)timeDisplay.textContent=`${fmt(film.currentTime)} / ${fmt(dur)}`;
   };
  }
  if(speedSelect){speedSelect.onchange=()=>{film.playbackRate=Number(speedSelect.value)}}
@@ -847,10 +1085,8 @@ function setupCinemaModal(){
  }
  chapterBtns.forEach(btn=>{
   btn.onclick=()=>{
-   const st=Number(btn.dataset.start);
-   film.currentTime=st;
-   film.play().catch(()=>{});
-   syncChapter(st);
+   const idx=Number(btn.dataset.filmIdx)||0;
+   loadCinemaIdx(idx);
   };
  });
  $('#film-dialog')?.addEventListener('close',()=>{

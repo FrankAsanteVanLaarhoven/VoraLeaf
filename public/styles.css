@@ -289,3 +289,54 @@
   .bag-item{grid-template-columns:60px 1fr;gap:14px}
   .bag-item-price{grid-column:2;text-align:left}
 }
+
+/* ==========================================================================
+   5-Video Media Showcase: Men's (BOLD), Women's (BLOOM), Workout & Intimate
+   ========================================================================== */
+.editions-video-section{padding-top:64px;padding-bottom:64px}
+.editions-video-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+.editions-video-grid.single-col{grid-template-columns:1fr;max-width:860px;margin:0 auto}
+.edition-video-card{background:var(--cream);border:1px solid #c3cbb6;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 14px 36px rgba(17,30,22,.06)}
+.edition-video-card.womens{border-color:#d6b9bf;background:#f7f1f2}
+.edition-video-stage,.intimate-video-frame,.workout-video-stage{position:relative;aspect-ratio:16/9;background:#0e1712;overflow:hidden}
+.showcase-video{position:relative;z-index:2;width:100%;height:100%;object-fit:cover;display:block}
+.showcase-poster-fallback{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
+.edition-video-overlay{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;padding:14px 16px;background:linear-gradient(180deg,rgba(10,18,13,.45) 0%,transparent 38%,transparent 62%,rgba(10,18,13,.65) 100%);pointer-events:none}
+.edition-video-badge{align-self:flex-start;background:rgba(15,28,20,.78);backdrop-filter:blur(8px);color:#f3efe6;border:1px solid rgba(201,168,106,.45);font-size:10px;letter-spacing:1.3px;text-transform:uppercase;padding:5px 11px}
+.edition-video-ctrls{display:flex;gap:8px;flex-wrap:wrap;pointer-events:auto}
+.edition-ctrl-btn{background:rgba(15,28,20,.82);backdrop-filter:blur(8px);color:#f5f1e8;border:1px solid rgba(245,241,232,.28);padding:6px 12px;font-size:11px;letter-spacing:.6px;cursor:pointer;transition:background .18s,border-color .18s}
+.edition-ctrl-btn:hover{background:var(--forest);border-color:var(--gold)}
+.edition-video-body{padding:26px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
+.edition-video-body h3{font-size:32px;margin:0}
+.edition-video-sub{font-size:12px;text-transform:uppercase;letter-spacing:1.1px;color:#6c5326;margin:0;font-weight:600}
+.edition-video-card.womens .edition-video-sub{color:#7a3b4b}
+.edition-video-body p{font-size:13px;color:var(--ink);line-height:1.7;margin:0}
+.edition-video-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:12px}
+.edition-video-actions .button{margin-top:0}
+
+.intimate-campaign-section{padding-top:48px;padding-bottom:64px}
+.intimate-campaign-shell{background:linear-gradient(135deg,#132219 0%,#1d2e23 55%,#2b1f1d 100%);color:#f4efe4;border:1px solid rgba(201,168,106,.38);padding:46px;display:grid;grid-template-columns:1.05fr 1.15fr;gap:38px;align-items:center;box-shadow:0 24px 60px rgba(12,22,16,.18)}
+.intimate-campaign-copy .eyebrow{color:#d8b979}
+.intimate-campaign-copy h2{color:#f7f3ea;font-size:44px;line-height:1.06;margin:8px 0 16px}
+.intimate-lead{color:rgba(244,239,228,.88);font-size:14px;line-height:1.75;margin:0 0 22px}
+.intimate-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.intimate-pillar{background:rgba(255,255,255,.06);border:1px solid rgba(216,185,121,.28);padding:14px}
+.intimate-pillar strong{display:block;font:19px var(--serif);color:#ecd39a;margin-bottom:4px}
+.intimate-pillar span{display:block;font-size:11.5px;color:rgba(244,239,228,.8);line-height:1.5}
+.intimate-campaign-copy .button{background:#c9a86a;border-color:#c9a86a;color:#122017}
+.intimate-campaign-copy .button.ghost{background:transparent;border-color:rgba(244,239,228,.45);color:#f4efe4}
+.intimate-video-frame{border:1px solid rgba(216,185,121,.42);box-shadow:0 18px 44px rgba(0,0,0,.38)}
+
+.workout-video-feature{padding-top:48px;padding-bottom:56px}
+.workout-video-stage{border:1px solid #b8c2ac;box-shadow:0 16px 40px rgba(17,30,22,.1)}
+
+@media(max-width:1100px){
+  .editions-video-grid,.intimate-campaign-shell{grid-template-columns:1fr}
+  .intimate-pillars{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:760px){
+  .intimate-campaign-shell{padding:26px 20px;gap:24px}
+  .intimate-campaign-copy h2{font-size:32px}
+  .intimate-pillars{grid-template-columns:1fr}
+  .edition-video-body{padding:20px 18px 24px}
+}
