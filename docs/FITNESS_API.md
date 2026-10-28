@@ -27,6 +27,7 @@ The tutorial at https://www.youtube.com/watch?v=KBpoBc98BwM uses the original Ex
 
 | VORALEAF route | Upstream operation |
 | --- | --- |
+| `GET /api/fitness/status` | ExerciseDB `getStatus` (`GET https://exercisedb.p.rapidapi.com/status`, [RapidAPI Playground reference](https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb/playground/getStatus)) |
 | `GET /api/fitness/exercises?search=&bodyPart=&equipment=&limit=6&offset=0` | Original `/exercises`, `/name/{name}`, `/bodyPart/{part}` or `/equipment/{equipment}` |
 | `GET /api/fitness/exercises/{id}` | `/exercises/exercise/{id}` |
 | `GET /api/fitness/image/{id}?resolution=180` | `/image?exerciseId={id}&resolution=180` with a server-side key header |
@@ -68,6 +69,7 @@ Remaining experiments include mobile filter use, assistive-technology navigation
 
 ## Primary sources reviewed
 
+- https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb/playground/getStatus
 - https://edb-docs.up.railway.app/docs/exercise-service/exercises
 - https://edb-docs.up.railway.app/docs/exercise-service/exercise
 - https://edb-docs.up.railway.app/docs/image-service/image

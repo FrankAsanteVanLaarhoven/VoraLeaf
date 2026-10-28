@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { handleFitnessRequest } from '../server/fitness-api.mjs';
 import { handleMembershipRequest } from '../server/membership.mjs';
 import { handleCreatorRequest } from '../server/creator-services.mjs';
+import { handleCheckoutRequest } from '../server/checkout.mjs';
 
 const directory = process.argv.includes('--dist') ? '../dist/' : '../public/';
 const root = await realpath(fileURLToPath(new URL(directory, import.meta.url)));
@@ -20,10 +21,10 @@ const withinRoot = file => file === root || file.startsWith(root + sep);
 http.createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-    if (pathname.startsWith('/api/studio/') || pathname === '/api/fitness' || pathname.startsWith('/api/fitness/')) {
+    if (pathname.startsWith('/api/studio/') || pathname.startsWith('/api/checkout/') || pathname === '/api/fitness' || pathname.startsWith('/api/fitness/')) {
       const hasBody=!['GET','HEAD'].includes(request.method);
       const apiRequest = new Request(`http://localhost:${port}${request.url}`, { method:request.method,headers:request.headers,...(hasBody?{body:request,duplex:'half'}:{}) });
-      for(const handler of [handleMembershipRequest,handleCreatorRequest,handleFitnessRequest]){
+      for(const handler of [handleCheckoutRequest,handleMembershipRequest,handleCreatorRequest,handleFitnessRequest]){
         const apiResponse=await handler(apiRequest,process.env);
         if(apiResponse){response.writeHead(apiResponse.status,Object.fromEntries(apiResponse.headers));response.end(Buffer.from(await apiResponse.arrayBuffer()));return;}
       }

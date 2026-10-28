@@ -25,7 +25,7 @@ async function bundleModule(file, exports, prelude='') {
  text=text.replace(/^export\s+(?=(?:async\s+)?function|class|const|let)/gm,'');
  return `(()=>{${prelude}\n${text}\nreturn {${exports.join(',')}};})()`;
 }
-const api=`const voraFitness=${await bundleModule('server/fitness-api.mjs',['handleFitnessRequest'])};\nconst voraMembership=${await bundleModule('server/membership.mjs',['getStudioMember','handleMembershipRequest'])};\nconst voraCreator=${await bundleModule('server/creator-services.mjs',['handleCreatorRequest'],'const getStudioMember=voraMembership.getStudioMember;')};`;
+const api=`const voraCheckout=${await bundleModule('server/checkout.mjs',['handleCheckoutRequest','calculateCartSummary'])};\nconst voraFitness=${await bundleModule('server/fitness-api.mjs',['handleFitnessRequest'])};\nconst voraMembership=${await bundleModule('server/membership.mjs',['getStudioMember','handleMembershipRequest'])};\nconst voraCreator=${await bundleModule('server/creator-services.mjs',['handleCreatorRequest'],'const getStudioMember=voraMembership.getStudioMember;')};`;
 const runtime = `
 const VORA_STATIC_MAP = ${JSON.stringify(files)};
 function voraAssetResponse(request) {
@@ -46,7 +46,7 @@ function voraAssetResponse(request) {
  return new Response(request.method==='HEAD'?null:bytes,{headers:{...headers,'Content-Length':String(bytes.length),...(['video/mp4','audio/mpeg'].includes(item.type)?{'Accept-Ranges':'bytes'}:{})}});
 }
 export default { async fetch(request,env={},ctx) {
- for(const handler of [voraMembership.handleMembershipRequest,voraCreator.handleCreatorRequest,voraFitness.handleFitnessRequest]){const response=await handler(request,env);if(response)return response;}
+ for(const handler of [voraCheckout.handleCheckoutRequest,voraMembership.handleMembershipRequest,voraCreator.handleCreatorRequest,voraFitness.handleFitnessRequest]){const response=await handler(request,env);if(response)return response;}
  if(new URL(request.url).pathname.startsWith('/api/'))return new Response(JSON.stringify({error:'Unknown API route'}),{status:404,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});
  return voraAssetResponse(request);
 } };

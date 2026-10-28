@@ -1,4 +1,5 @@
 const EXERCISE_ORIGIN = 'https://exercisedb.p.rapidapi.com';
+const EXERCISE_STATUS_PLAYGROUND = 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb/playground/getStatus';
 const YOUTUBE_SEARCH = 'https://www.googleapis.com/youtube/v3/search';
 const SOURCE = 'ExerciseDB · RapidAPI';
 const TIMEOUT_MS = 8000;
@@ -131,6 +132,34 @@ export async function handleFitnessRequest(request, env = {}, fetchImpl = fetch)
   try {
     const pathname = url.pathname.replace(/\/$/, '');
     const params = url.searchParams;
+    if (pathname === '/api/fitness/status') {
+      validateParams(params, []);
+      const key = apiKey(env, 'RAPIDAPI_KEY');
+      const upstream = new URL('/status', EXERCISE_ORIGIN);
+      const payload = await providerJson(upstream.href, exerciseHeaders(key), fetchImpl);
+      let statusValue = '';
+      let messageValue = '';
+      if (typeof payload === 'string') {
+        statusValue = cleanText(payload, 120);
+        messageValue = statusValue;
+      } else if (payload && typeof payload === 'object' && !Array.isArray(payload)) {
+        statusValue = cleanText(payload.status || payload.state || (payload.ok === true ? 'OK' : ''), 120);
+        messageValue = cleanText(payload.message || payload.description || statusValue, 240);
+      } else {
+        throw malformed();
+      }
+      if (!statusValue && !messageValue) throw malformed();
+      return json({
+        ok: true,
+        status: statusValue || 'OK',
+        message: messageValue || 'ExerciseDB service is online.',
+        source: SOURCE,
+        upstream: '/status',
+        playgroundUrl: EXERCISE_STATUS_PLAYGROUND,
+        youtubeConfigured: Boolean(typeof env.YOUTUBE_API_KEY === 'string' && env.YOUTUBE_API_KEY.trim()),
+        checkedAt: new Date().toISOString()
+      });
+    }
     const imageMatch = pathname.match(/^\/api\/fitness\/image\/([^/]+)$/);
     if (imageMatch) {
       validateParams(params, ['resolution']);

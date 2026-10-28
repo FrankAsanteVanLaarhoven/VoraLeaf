@@ -11,6 +11,9 @@ for(const path of ['/','/fitness','/fitness/starter-wall-press','/products/bloom
 const api=await worker.fetch(new Request('https://voraleaf.invalid/api/fitness/exercises'),{});
 assert.equal(api.status,503);assert.equal(api.headers.get('Cache-Control'),'no-store');
 const body=await api.json();assert.ok(body.code||body.error);
+const fitnessStatus=await worker.fetch(new Request('https://voraleaf.invalid/api/fitness/status'),{});
+assert.equal(fitnessStatus.status,503);assert.equal(fitnessStatus.headers.get('Cache-Control'),'no-store');
+const fitnessStatusBody=await fitnessStatus.json();assert.equal(fitnessStatusBody.code,'PROVIDER_NOT_CONFIGURED');
 const range=await worker.fetch(new Request('https://voraleaf.invalid/assets/ritual-motion-study.mp4',{headers:{Range:'bytes=0-31'}}),{});
 assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,32);
 const music=await worker.fetch(new Request('https://voraleaf.invalid/assets/audio/golden-hour.mp3',{headers:{Range:'bytes=0-31'}}),{});
@@ -20,6 +23,8 @@ assert.equal(member.status,401);assert.equal(member.headers.get('Cache-Control')
 const memberBody=await member.json();assert.equal(memberBody.eligible,false);assert.equal('userId' in memberBody,false);
 const config=await worker.fetch(new Request('https://voraleaf.invalid/api/studio/config'),{});
 assert.equal(config.status,200);const cfg=await config.json();assert.equal(cfg.live.configured,false);assert.equal(cfg.providers.youtube.configured,false);assert.equal(cfg.providers.youtube.connected,false);
+const checkoutCfg=await worker.fetch(new Request('https://voraleaf.invalid/api/checkout/config'),{});
+assert.equal(checkoutCfg.status,200);const chkBody=await checkoutCfg.json();assert.equal(chkBody.pricingConfigured,false);assert.equal(JSON.stringify(chkBody).includes('frankleroyvan@gmail.com'),false);
 for(const path of ['/api/studio/uploads','/api/studio/live/create']){
  const denied=await worker.fetch(new Request('https://voraleaf.invalid'+path,{method:'POST',headers:{Origin:'https://voraleaf.invalid','Content-Type':'application/json'},body:'{}'}),{});
  assert.equal(denied.status,401,path);assert.equal(denied.headers.get('Cache-Control'),'no-store');

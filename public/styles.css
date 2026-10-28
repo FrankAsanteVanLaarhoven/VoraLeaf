@@ -134,3 +134,158 @@
   .pack-story-media img{opacity:1!important}
   .timer.has-video .timer-video-backdrop{display:none!important}
 }
+
+/* White-Label Bio Herbs Vitality, Ingredients, Benefits, Bundles, Reviews & UK PayPal/Stripe Checkout */
+.trust-pillars-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 7%;background:#eeebe2;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust-pillar{display:flex;align-items:center;gap:14px}
+.trust-icon{width:38px;height:38px;border:1px solid #b8c0ae;border-radius:50%;display:inline-grid;place-items:center;color:var(--forest);font-size:15px;flex-shrink:0;background:var(--cream)}
+.trust-pillar strong{display:block;font-size:12px;letter-spacing:.3px;color:var(--ink)}
+.trust-pillar div span{display:block;font-size:11px;color:var(--muted)}
+
+.bundles-section{background:#f2efe6;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.bundle-edition-picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bundle-picker-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-right:4px}
+.bundles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.bundle-card{background:var(--cream);border:1px solid #c5ccb9;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s,box-shadow .25s}
+.bundle-card:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(16,46,37,.08)}
+.bundle-card-featured{border:2px solid var(--forest);box-shadow:0 10px 24px rgba(24,62,50,.1)}
+.bundle-card-top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:#e8eadd}
+.bundle-card-featured .bundle-card-top{background:var(--forest);color:var(--cream)}
+.bundle-badge{font-size:9px;text-transform:uppercase;letter-spacing:1.4px;font-weight:600}
+.bundle-savings{font-size:10px;padding:2px 8px;background:rgba(169,135,80,.18);color:#5d4824;border-radius:2px;font-weight:600}
+.bundle-card-featured .bundle-savings{background:var(--gold);color:#102e25}
+.bundle-art-preview .product-art{height:240px}
+.bundle-art-preview .pack-pair{inset:36px 12px 36px;gap:10px}
+.bundle-art-preview .art-num{font-size:44px;right:14px;bottom:8px}
+.bundle-card-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.bundle-card-body h3{font-size:21px;line-height:1.2;margin:0}
+.bundle-pack-meta{font-size:11px;color:var(--muted);margin:0}
+.bundle-price-row{display:flex;align-items:baseline;gap:10px;margin:6px 0;flex-wrap:wrap}
+.price-gbp{font:24px var(--serif);color:var(--forest)}
+.price-usd{font-size:11px;color:var(--muted)}
+.bundle-actions{display:grid;gap:8px;margin-top:auto}
+.bundle-actions .button{width:100%;min-height:42px;padding:10px 14px;gap:12px}
+
+.vitality-about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:start}
+.vitality-lead{font:26px/1.35 var(--serif);color:var(--forest);margin-bottom:14px}
+.vitality-subhead{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:16px}
+.vitality-cta-row{margin-top:26px}
+.vitality-highlights-card{background:var(--forest);color:var(--cream);padding:36px;border:1px solid var(--gold)}
+.vitality-highlights-card .eyebrow{color:#d8c795;margin-bottom:20px}
+.vitality-highlights-list{list-style:none;padding:0;margin:0;display:grid;gap:18px}
+.vitality-highlights-list li{border-bottom:1px solid rgba(215,217,204,.2);padding-bottom:14px}
+.vitality-highlights-list li:last-child{border-bottom:0;padding-bottom:0}
+.vitality-highlights-list strong{display:block;font:19px var(--serif);color:#f7f4ec;margin-bottom:4px}
+.vitality-highlights-list span{display:block;font-size:12px;color:#cbd6c6;line-height:1.6}
+
+.benefits-section{background:#eeebe2;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.benefits-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.benefit-card{background:var(--cream);border:1px solid #c6cdb9;padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+.benefit-num{font:34px var(--serif);color:var(--gold)}
+.benefit-card h3{font-size:24px;line-height:1.2;margin:0}
+.benefit-card p{font-size:13px;color:var(--muted);margin:0;line-height:1.75}
+.benefits-footnotes{margin-top:24px;display:grid;gap:4px}
+.benefits-footnotes p{font-size:11px;color:var(--muted);margin:0}
+
+.extract-spotlight{background:linear-gradient(135deg,#183e32 0%,#102e25 100%);color:var(--cream);padding:36px 40px;border:1px solid var(--gold);display:grid;grid-template-columns:1.5fr 1fr;gap:32px;align-items:center;margin-bottom:32px}
+.extract-spotlight .eyebrow{color:#d8c795;margin-bottom:10px}
+.extract-spotlight h3{font-size:30px;color:#fff;margin-bottom:12px}
+.extract-spotlight p{font-size:13px;color:#d6e0d2;margin:0;line-height:1.8}
+.extract-spotlight-meta{display:grid;gap:10px}
+.extract-spotlight-meta span{background:rgba(255,255,255,.08);border:1px solid rgba(216,199,149,.35);padding:10px 16px;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#f3eddf}
+
+.ingredients-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.ingredient-card{background:#eeebe2;border:1px solid #c3cbb6;padding:26px 24px;display:flex;flex-direction:column;gap:14px}
+.ingredient-card-highlight{background:#e6ead9;border:1.5px solid var(--forest)}
+.ingredient-card-head{display:flex;align-items:flex-start;gap:14px}
+.ingredient-idx{font:28px var(--serif);color:var(--gold);line-height:1}
+.ingredient-card h3{font-size:23px;margin:0 0 4px}
+.ingredient-latin{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:#5a6b5e;margin:0;font-weight:600}
+.ingredient-points{margin:0;padding-left:18px;display:grid;gap:8px;font-size:12.5px;color:var(--ink);line-height:1.65}
+
+.specs-strip{margin-top:32px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;background:var(--cream);border:1px solid #bdc6b0;padding:22px 26px}
+.spec-item{display:flex;flex-direction:column;gap:4px}
+.spec-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
+.spec-value{font-size:13px;color:var(--ink);line-height:1.5}
+
+.certifications-box{background:#e8eadd;border:1px solid #bcc5b0;padding:38px 42px}
+.certifications-head{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:center}
+.certifications-head h2{font-size:38px;margin-bottom:12px}
+.certifications-head p{font-size:13px;color:var(--muted);margin:0}
+.cert-badges-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.cert-badge{background:var(--cream);border:1px solid #b5bfaa;padding:16px 18px}
+.cert-badge strong{display:block;font:20px var(--serif);color:var(--forest);margin-bottom:3px}
+.cert-badge span{display:block;font-size:11px;color:var(--muted)}
+.cert-disclaimer{margin:24px 0 0;padding-top:18px;border-top:1px solid #c5ccb9;font-size:11px;color:var(--muted);line-height:1.7}
+
+.reviews-layout{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:start}
+.reviews-summary-card{background:#eeebe2;border:1px solid #c3cbb6;padding:30px}
+.reviews-score-big{display:flex;align-items:center;gap:18px;margin-bottom:24px}
+.reviews-score-big strong{font:56px/1 var(--serif);color:var(--forest)}
+.reviews-score-big p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.stars-gold{color:#9a7432;letter-spacing:2px;font-size:15px}
+.reviews-bars{display:grid;gap:10px}
+.review-bar-row{display:grid;grid-template-columns:42px 1fr 74px;align-items:center;gap:10px;font-size:11px}
+.bar-track{height:8px;background:#d8dccd;border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;background:var(--forest)}
+.bar-pct{text-align:right;color:var(--muted)}
+.reviews-list{display:grid;gap:16px}
+.review-card{background:var(--cream);border:1px solid #c6cdb9;padding:22px 24px}
+.review-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.review-verified{font-size:10px;background:#e3e8d8;color:var(--forest);padding:2px 8px;margin-left:8px;text-transform:uppercase;letter-spacing:.8px}
+.review-card time{font-size:11px;color:var(--muted)}
+.review-card p{margin:8px 0 0;font-size:13px;color:var(--ink);line-height:1.7}
+
+.product-price-banner{display:flex;justify-content:space-between;align-items:center;gap:14px;background:#eeebe2;border:1px solid #c2cbb5;padding:16px 20px;margin:16px 0;flex-wrap:wrap}
+.product-price-gbp{font:32px var(--serif);color:var(--forest);margin-right:10px}
+.product-price-usd{font-size:13px;color:var(--muted)}
+.product-bundle-pill{background:var(--forest);color:var(--cream);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:5px 11px}
+.bundle-picker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0 22px}
+.bundle-option{border:1px solid #aab69e;background:transparent;padding:13px 15px;text-align:left;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:all .18s}
+.bundle-option strong{font-size:13px;color:var(--ink)}
+.bundle-option span{font-size:12px;color:var(--forest);font-weight:600}
+.bundle-option small{font-weight:400;color:var(--muted)}
+.bundle-opt-save{font-style:normal;font-size:10px;color:#7a5c28}
+.bundle-option.active,.bundle-option:hover{border:1.5px solid var(--forest);background:#e8eadd}
+.product-cta-stack{display:grid;gap:10px;margin-bottom:14px}
+
+.bag-item-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.bag-preset-pills{display:inline-flex;gap:5px;flex-wrap:wrap}
+.bag-preset-btn{background:transparent;border:1px solid #b5bfaa;font-size:10px;padding:5px 9px;color:var(--muted)}
+.bag-preset-btn.active,.bag-preset-btn:hover{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.bag-item-price{text-align:right;min-width:95px}
+.bag-item-price strong{display:block;font:22px var(--serif);color:var(--forest)}
+.bag-item-price span{display:block;font-size:11px;color:var(--muted)}
+.currency-Toggle-row{display:flex;align-items:center;gap:8px;margin:14px 0;font-size:11px}
+.currency-btn{background:transparent;border:1px solid #aab69e;padding:5px 11px;font-size:11px}
+.currency-btn.active{background:var(--forest);color:var(--cream);border-color:var(--forest)}
+.bag-totals-box{border-top:1px solid #c2cbb5;border-bottom:1px solid #c2cbb5;padding:14px 0;margin:14px 0;display:grid;gap:8px}
+.bag-total-line{display:flex;justify-content:space-between;align-items:baseline;font-size:12px}
+.bag-total-grand{font-size:14px;padding-top:8px;border-top:1px solid #d2d8c7}
+.bag-total-grand strong{font:26px var(--serif);color:var(--forest);display:block;text-align:right}
+.bag-total-grand small{display:block;font-size:11px;color:var(--muted);text-align:right}
+.checkout-input{width:100%;padding:11px 12px;border:1px solid #aab69b;background:var(--cream);color:var(--ink);font-size:13px}
+.checkout-method-form{margin-top:14px}
+.paypal-checkout-btn{background:#142c8e;border-color:#142c8e;color:#fff}
+.paypal-checkout-btn:hover{background:#0d1f66}
+.stripe-checkout-btn{background:var(--forest);border-color:var(--forest)}
+.checkout-status-panel{margin-top:14px;padding:16px;background:var(--cream);border:1px solid var(--gold);font-size:12px}
+.checkout-status-title{margin:0 0 6px;color:var(--forest)}
+.checkout-fallback-actions{margin-top:10px}
+.bag-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.bag-secondary-actions .button{margin-top:0}
+.merchant-account-note{margin:16px 0 0;font-size:10px;color:var(--muted);line-height:1.5}
+.checkout-banner{grid-column:1/-1;padding:16px 20px;border:1px solid var(--forest);background:#e6ead9;font-size:13px;margin-bottom:10px}
+.checkout-banner-warn{border-color:var(--gold);background:#f3ebd9}
+
+@media(max-width:1100px){
+  .trust-pillars-bar,.bundles-grid,.benefits-grid,.specs-strip{grid-template-columns:repeat(2,1fr)}
+  .ingredients-grid{grid-template-columns:repeat(2,1fr)}
+  .vitality-about-grid,.extract-spotlight,.certifications-head,.reviews-layout{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .trust-pillars-bar,.bundles-grid,.benefits-grid,.ingredients-grid,.specs-strip,.bundle-picker-grid,.bag-secondary-actions,.cert-badges-grid{grid-template-columns:1fr}
+  .extract-spotlight,.certifications-box,.vitality-highlights-card,.reviews-summary-card{padding:24px 20px}
+  .bag-item{grid-template-columns:60px 1fr;gap:14px}
+  .bag-item-price{grid-column:2;text-align:left}
+}

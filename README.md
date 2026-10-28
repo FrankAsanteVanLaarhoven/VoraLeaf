@@ -33,9 +33,12 @@ The static build copies `public/` to `dist/`. Deploy it at the **domain root** w
 | Area | Included |
 | --- | --- |
 | Collection | BOLD 01 and EMBER 02 men's editions; BLOOM 03 women's edition |
-| Product pages | Proposed 6 × 15 g / 90 g and 10 × 10 g / 100 g formats; interactive sachet and hand-held concept galleries |
+| White-label formula | Water-soluble freeze-dried Tongkat Ali (*Eurycoma longifolia*), Panax Ginseng, Radix Angelicae Sinensis (Dong Quai), Jujube (*Ziziphus jujuba*), Mixed African Roots Bitter Herbs, and smooth instant coffee blend |
+| Benefits & certifications | 48-hour sustained vigor, circulation/performance support, mood & anti-fatigue, traditional herbal support; GMP, HACCP, HALAL and ISO 9001:2000 certified manufacturing (DRS Secret Worldwide Manufacturing Sdn Bhd partner) |
+| Multipack bundles | 1 Box, 4 Boxes, 12 Boxes and 20 Boxes in 6 × 15 g (90 g) and 10 × 10 g (100 g) pack formats (retail pricing not yet set) |
+| Product pages | Interactive sachet and hand-held galleries, bundle & format selectors, ingredients & process breakdown, customer reviews (4.6/5 across 16 reviews) |
 | Packaging visuals | Five new photographs showing separate paper envelopes, sealed metallic inner pouches, opening, holding and water pouring; gold men's pouches and rose-gold BLOOM pouches |
-| Enquiries | Local bag, quantities, email draft and text export; no checkout or payment |
+| Checkout & enquiries | UK bag with server-side PayPal (`/api/checkout/paypal`) and Stripe (`/api/checkout/stripe`) checkout integration (merchant account kept strictly server-side), plus order/wholesale summary export |
 | Journal | Six complete articles, search, categories, saved reading and sharing |
 | Gym & exercises | Twelve NHS-sourced starter movements, filters, search, pagination, detail pages, curated videos, session notes/export and rest timer |
 | Fitness API | Server-side original ExerciseDB RapidAPI and YouTube search adapters, protected GIF proxy, timeouts, bounded responses and missing-key fallback |

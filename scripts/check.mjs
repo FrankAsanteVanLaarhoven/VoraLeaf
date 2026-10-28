@@ -68,6 +68,12 @@ try {
   verify(new Set(articleIds).size === articleIds.length, 'Duplicate article ID.');
   for (const id of [...productIds, ...articleIds]) verify(typeof id === 'string' && /^[a-z][a-z0-9-]*$/.test(id), `Invalid content ID: ${String(id)}`);
   verify(['bold', 'ember', 'bloom'].every(id => productIds.includes(id)), 'The BOLD, EMBER and BLOOM editions are required.');
+  verify(Array.isArray(data.bundles) && data.bundles.length === 4, 'Four bundle tiers (1, 4, 12, 20 boxes) are required.');
+  verify(data.bundles.every(b => !('priceGBP' in b) && !('priceUSD' in b)), 'Bundle definitions must not expose prices while pricing is unset.');
+  verify(Array.isArray(data.benefits) && data.benefits.length === 4, 'Four vitality benefit pillars are required.');
+  verify(Array.isArray(data.ingredients?.items) && data.ingredients.items.length === 6, 'Six core botanical/coffee ingredients (including Mixed African Roots Bitter Herbs) are required.');
+  verify(data.ingredients.items.some(i => i.name === 'Mixed African Roots Bitter Herbs'), 'Mixed African Roots Bitter Herbs must be present in ingredients.');
+  verify(data.commerce?.paypal?.endpoint === '/api/checkout/paypal' && data.commerce?.stripe?.endpoint === '/api/checkout/stripe' && !JSON.stringify(data.commerce).includes('frankleroyvan@gmail.com'), 'Client commerce config must use server endpoints without exposing internal merchant email.');
 
   let svgCount = 0;
   for (const id of productIds) {
@@ -160,6 +166,9 @@ try {
     verify(!/(^|[/\\])\.env(?:$|\.(?!example$|sample$))/.test(relative), `Environment file must not be exported: ${relative}`);
     const text = readFileSync(filename, 'utf8');
     verify(!credentialPatterns.some(pattern => pattern.test(text)), `Potential embedded credential in ${relative}; remove it before export.`);
+    if (relative.startsWith(`public${path.sep}`)) {
+      verify(!text.includes('frankleroyvan@gmail.com'), `Internal merchant email must not be exposed in client file: ${relative}`);
+    }
   }
   console.log(`PASS Export hygiene: ${sourceFiles.length} source/config text files scanned`);
   console.log(`VORALEAF integrity checks passed (${checks} assertions). Browser/device, payment, certification and live-service tests are separate.`);

@@ -16,11 +16,42 @@ test('unrelated routes return null and owned routes require GET', async () => {
 });
 
 test('missing provider keys produce actionable 503 without network access', async () => {
-  for (const route of ['/api/fitness/exercises', '/api/fitness/exercises/0001', '/api/fitness/image/0001', '/api/fitness/videos?query=bench%20press']) {
+  for (const route of ['/api/fitness/status', '/api/fitness/exercises', '/api/fitness/exercises/0001', '/api/fitness/image/0001', '/api/fitness/videos?query=bench%20press']) {
     const response = await handleFitnessRequest(request(route), {}, noNetwork);
     assert.equal(response.status, 503, route); assert.equal((await response.json()).code, 'PROVIDER_NOT_CONFIGURED');
     assert.equal(response.headers.get('cache-control'), 'no-store');
   }
+});
+
+test('getStatus endpoint calls ExerciseDB /status with RapidAPI headers and returns normalized status metadata', async () => {
+  let calls = 0;
+  const response = await handleFitnessRequest(request('/api/fitness/status'), env, async (url, options) => {
+    calls++; const upstream = new URL(url);
+    assert.equal(upstream.origin, 'https://exercisedb.p.rapidapi.com');
+    assert.equal(upstream.pathname, '/status');
+    assert.equal(upstream.search, '');
+    assert.equal(options.headers['X-RapidAPI-Key'], env.RAPIDAPI_KEY);
+    assert.equal(options.headers['X-RapidAPI-Host'], 'exercisedb.p.rapidapi.com');
+    assert.equal(options.cache, 'no-store');
+    return jsonResponse({ status: 'OK', message: 'ExerciseDB service is operational' });
+  });
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(calls, 1);
+  assert.equal(body.ok, true);
+  assert.equal(body.status, 'OK');
+  assert.equal(body.message, 'ExerciseDB service is operational');
+  assert.equal(body.source, 'ExerciseDB · RapidAPI');
+  assert.equal(body.upstream, '/status');
+  assert.equal(body.playgroundUrl, 'https://rapidapi.com/justin-WFnsXH_t6/api/exercisedb/playground/getStatus');
+  assert.equal(body.youtubeConfigured, true);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal(JSON.stringify(body).includes(env.RAPIDAPI_KEY), false);
+
+  const rejectedQuery = await handleFitnessRequest(request('/api/fitness/status?extra=1'), env, noNetwork);
+  assert.equal(rejectedQuery.status, 400);
+  const malformedStatus = await handleFitnessRequest(request('/api/fitness/status'), env, async () => jsonResponse([]));
+  assert.equal(malformedStatus.status, 502);
 });
 
 test('list uses fixed provider, server-only headers and honest unknown totals', async () => {

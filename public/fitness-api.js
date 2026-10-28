@@ -6,5 +6,8 @@ window.VoraleafFitnessApi = Object.freeze({
       return Promise.reject(new Error('Unsupported fitness API route.'));
     }
     return fetch(url, { method: 'GET', cache: 'no-store', credentials: 'same-origin', signal: options.signal, headers: { Accept: 'application/json' } });
+  },
+  getStatus(options = {}) {
+    return this.request('/api/fitness/status', options);
   }
 });
