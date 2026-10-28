@@ -301,11 +301,7 @@
 .edition-video-stage,.intimate-video-frame,.workout-video-stage{position:relative;aspect-ratio:16/9;background:#0e1712;overflow:hidden}
 .showcase-video{position:relative;z-index:2;width:100%;height:100%;object-fit:cover;display:block}
 .showcase-poster-fallback{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
-.edition-video-overlay{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:space-between;padding:14px 16px;background:linear-gradient(180deg,rgba(10,18,13,.45) 0%,transparent 38%,transparent 62%,rgba(10,18,13,.65) 100%);pointer-events:none}
-.edition-video-badge{align-self:flex-start;background:rgba(15,28,20,.78);backdrop-filter:blur(8px);color:#f3efe6;border:1px solid rgba(201,168,106,.45);font-size:10px;letter-spacing:1.3px;text-transform:uppercase;padding:5px 11px}
-.edition-video-ctrls{display:flex;gap:8px;flex-wrap:wrap;pointer-events:auto}
-.edition-ctrl-btn{background:rgba(15,28,20,.82);backdrop-filter:blur(8px);color:#f5f1e8;border:1px solid rgba(245,241,232,.28);padding:6px 12px;font-size:11px;letter-spacing:.6px;cursor:pointer;transition:background .18s,border-color .18s}
-.edition-ctrl-btn:hover{background:var(--forest);border-color:var(--gold)}
+.edition-video-overlay,.edition-video-badge,.edition-video-ctrls,.edition-ctrl-btn,.hero-scene-bar,#film-dialog,.fitness-hero-video-bar,.intimate-caption{display:none!important}
 .edition-video-body{padding:26px 28px 30px;display:flex;flex-direction:column;gap:10px;flex:1}
 .edition-video-body h3{font-size:32px;margin:0}
 .edition-video-sub{font-size:12px;text-transform:uppercase;letter-spacing:1.1px;color:#6c5326;margin:0;font-weight:600}
