@@ -332,16 +332,30 @@
 .intimate-campaign-copy .button.ghost{background:transparent;border-color:rgba(244,239,228,.45);color:#f4efe4}
 .intimate-video-frame{border:1px solid rgba(216,185,121,.42);box-shadow:0 18px 44px rgba(0,0,0,.38)}
 
-.workout-video-feature{padding-top:48px;padding-bottom:56px}
+.workout-showcase-section{padding-top:48px;padding-bottom:64px}
+.workout-video-feature{padding-top:0;padding-bottom:36px}
 .workout-video-stage{border:1px solid #b8c2ac;box-shadow:0 16px 40px rgba(17,30,22,.1)}
+.home-gym-explorer{border-top:1px solid var(--line);padding-top:34px;margin-top:10px}
+.home-gym-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:24px;flex-wrap:wrap}
+.home-gym-head h3{font-size:34px;margin:0}
+.home-gym-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.home-gym-card{background:#f0eee5;border:1px solid #c5cdb9;padding:22px;display:flex;flex-direction:column;gap:10px}
+.home-gym-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:9px;text-transform:uppercase;letter-spacing:1.1px}
+.home-gym-badge{background:var(--forest);color:var(--cream);padding:3px 8px}
+.home-gym-equip{border:1px solid #8e9c82;color:#3d5242;padding:3px 8px}
+.home-gym-card h4{font:24px/1.2 var(--serif);margin:4px 0 0}
+.home-gym-target{font-size:11px;color:#624d25;font-weight:600;margin:0;text-transform:capitalize}
+.home-gym-desc{font-size:12px;color:var(--muted);line-height:1.65;margin:0}
+.home-gym-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;padding-top:10px}
 
 @media(max-width:1100px){
   .editions-video-grid,.intimate-campaign-shell{grid-template-columns:1fr}
   .intimate-pillars{grid-template-columns:1fr 1fr 1fr}
+  .home-gym-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:760px){
   .intimate-campaign-shell{padding:26px 20px;gap:24px}
   .intimate-campaign-copy h2{font-size:32px}
-  .intimate-pillars{grid-template-columns:1fr}
+  .intimate-pillars,.home-gym-grid{grid-template-columns:1fr}
   .edition-video-body{padding:20px 18px 24px}
 }

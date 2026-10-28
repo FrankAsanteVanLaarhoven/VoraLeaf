@@ -212,32 +212,61 @@ function intimateSection(){
 }
 
 function workoutFeatureSection(){
- return `<section class="section-shell movement-feature workout-video-feature" id="workout-area">
-  <div class="workout-video-stage">
-   <img class="showcase-poster-fallback" src="/assets/hero-workout-poster.webp" alt="A couple preparing VORALEAF BOLD 01 and BLOOM 03 in a sunlit studio" width="1280" height="720">
-   <video class="showcase-video" src="/assets/hero-workout.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp" aria-label="VORALEAF active movement ritual"></video>
-   ${soundBtnHtml()}
-  </div>
-  <div>
-   <span class="eyebrow">MOVE &amp; UNWIND</span>
-   <h2>Life moves.<br>Fuel your rhythm.</h2>
-   <p>From morning studio sessions to active recovery together—experience how BOLD 01 and BLOOM 03 fit naturally into your movement and gym routine.</p>
-   <div class="edition-video-actions">
-    <a class="button" href="/fitness" data-link>Explore gym &amp; exercises ${arrow}</a>
-    <a class="button outline" href="/movement" data-link>Mindful movement timer ${arrow}</a>
+ const gymSeeds=(window.VORALEAF_FITNESS?.exercises||[]).slice(0,6);
+ return `<section class="section-shell workout-showcase-section" id="workout-area">
+  <div class="movement-feature workout-video-feature">
+   <div class="workout-video-stage">
+    <img class="showcase-poster-fallback" src="/assets/hero-workout-poster.webp" alt="A couple preparing VORALEAF BOLD 01 and BLOOM 03 in a sunlit studio" width="1280" height="720">
+    <video class="showcase-video" src="/assets/hero-workout.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp" aria-label="VORALEAF active movement ritual"></video>
+    ${soundBtnHtml()}
+   </div>
+   <div>
+    <span class="eyebrow">GYM &amp; EXERCISEDB LIBRARY · MOVE &amp; UNWIND</span>
+    <h2>Life moves.<br>Fuel your rhythm.</h2>
+    <p>From barbell and cable strength sessions to active recovery together—explore our integrated Gym &amp; ExerciseDB movement library directly inside this application window.</p>
+    <div class="edition-video-actions">
+     <a class="button" href="/fitness" data-link>Open full gym library (24 exercises) ${arrow}</a>
+     <a class="button outline" href="/movement" data-link>Mindful movement timer ${arrow}</a>
+    </div>
    </div>
   </div>
+  ${gymSeeds.length?`<div class="home-gym-explorer">
+   <div class="home-gym-head">
+    <div>
+     <span class="eyebrow">RAPIDAPI EXERCISEDB · IN-APP GYM PREVIEW</span>
+     <h3>Featured gym &amp; strength movements.</h3>
+    </div>
+    <a class="text-link" href="/fitness" data-link>Filter by Barbell, Dumbbell, Cable, Machine &amp; Body Area ↗</a>
+   </div>
+   <div class="home-gym-grid">
+    ${gymSeeds.map(ex=>`<article class="home-gym-card">
+     <div class="home-gym-meta">
+      <span class="home-gym-badge">${safe(ex.bodyPart)}</span>
+      <span class="home-gym-equip">${safe(ex.equipment)}</span>
+     </div>
+     <h4><a href="/fitness/${encodeURIComponent(ex.id)}" data-link>${safe(ex.name)}</a></h4>
+     <p class="home-gym-target">Target: ${safe(ex.target)}</p>
+     <p class="home-gym-desc">${safe(ex.description)}</p>
+     <div class="home-gym-actions">
+      <button type="button" class="button small" data-home-gym-open="${safe(ex.id)}">Open in window</button>
+      <a class="text-link" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Full guide ↗</a>
+     </div>
+    </article>`).join('')}
+   </div>
+  </div>`:''}
+  <dialog id="gym-quick-dialog" class="fitness-inapp-dialog" aria-label="In-app gym exercise guide"><div id="gym-quick-dialog-body"></div></dialog>
  </section>`;
 }
 
 function home(){
  const curFilm=heroPlaylist[heroVideoIdx]||heroPlaylist[0];
- return `<section class="hero"><div class="hero-media"><img class="hero-bg" src="/assets/coffee-hero.webp" alt="Hands opening the VORALEAF BOLD 01 box to reveal a sealed gold sachet in warm morning light" width="1280" height="720" fetchpriority="high"><video id="hero-video" class="hero-bg-video" src="${curFilm.src}" playsinline ${heroMuted?'muted':''} autoplay preload="auto" poster="${curFilm.poster||'/assets/coffee-hero.webp'}" aria-label="VORALEAF Roots Herbal Coffee"></video></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY &amp; INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s &amp; partners’ vitality coffee to support energy, desire and intimacy in long-term love. Fuel the long-term bond with reliable stamina that lasts up to 48 hours, starting with your morning cup.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><a class="button outline light-outline" href="/about" data-link>Ingredients &amp; benefits ${arrow}</a></div></div>${soundBtnHtml('hero-sound-btn',heroMuted)}<div class="hero-caption"><span>BOLD 01 · EMBER 02 · BLOOM 03</span><span>VORALEAF ROOTS HERBAL COFFEE · UK EDITION</span></div></section>
+ return `<section class="hero"><div class="hero-media"><img class="hero-bg" src="/assets/coffee-hero.webp" alt="Hands opening the VORALEAF BOLD 01 box to reveal a sealed gold sachet in warm morning light" width="1280" height="720" fetchpriority="high"><video id="hero-video" class="hero-bg-video" src="${curFilm.src}" playsinline ${heroMuted?'muted':''} autoplay preload="auto" poster="${curFilm.poster||'/assets/coffee-hero.webp'}" aria-label="VORALEAF Roots Herbal Coffee"></video></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY &amp; INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s &amp; partners’ vitality coffee to support energy, desire and intimacy in long-term love. Fuel the long-term bond with reliable stamina that lasts up to 48 hours, starting with your morning cup.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><a class="button outline light-outline" href="/fitness" data-link>Gym &amp; exercises ${arrow}</a></div></div>${soundBtnHtml('hero-sound-btn',heroMuted)}<div class="hero-caption"><span>BOLD 01 · EMBER 02 · BLOOM 03</span><span>VORALEAF ROOTS HERBAL COFFEE · UK EDITION</span></div></section>
 ${trustStripSection()}
 <section class="section-shell"><div class="section-head"><div><span class="eyebrow">THE COLLECTION</span><h2>Three editions. One signature vitality formula.</h2></div><a class="text-link" href="/collection" data-link>Explore all editions ↗</a></div><div class="collection-grid">${products.map(productCard).join('')}</div></section>
 ${mensAndWomensVideoSection('All')}
 ${featuredBundlesSection()}
 ${intimateSection()}
+${workoutFeatureSection()}
 ${aboutVitalitySection()}
 ${benefitsSection()}
 ${ingredientsSection()}
@@ -247,7 +276,6 @@ ${reviewsSection()}
 <section class="editorial-split"><div class="editorial-photo"><img src="/assets/together.webp" alt="A relaxed couple enjoying coffee and a conversation on a coastal terrace" width="768" height="650"></div><div class="editorial-copy"><span class="eyebrow">MORE THAN A COFFEE MOMENT</span><h2>A little pause.<br>A little presence.<br>A little <em>you.</em></h2><p>For quiet mornings, conversations that linger and the moments between everything else. Rejuvenate passion, energy and intimacy in long-term love.</p><a class="text-link" href="/journal/time-together" data-link>Find inspiration in the journal ↗</a><div class="ritual-line"><span>01</span> Open. Pour. Make it yours.</div></div></section>
 <section class="section-shell"><div class="section-head"><div><span class="eyebrow">THE VORALEAF JOURNAL</span><h2>Stories to come back to.</h2></div><a class="text-link" href="/journal" data-link>Explore the journal ↗</a></div><div class="journal-grid">${[articles[0],articles[1],articles[2]].map(articleCard).join('')}</div></section>
 <div class="marquee">ROOTED IN RITUAL. <span>48-Hour Vitality &amp; Confidence.</span> VORALEAF.</div>
-${workoutFeatureSection()}
 <section class="creator-banner"><div><span class="eyebrow">THE CREATOR STUDIO</span><h2>Your ritual.<br>Your story.</h2><p>Record your next coffee story, find its soundtrack or rehearse your words. Verified customers can also share with members and go live when publishing services are available.</p><a class="text-link" href="/studio" data-link>Step into the studio ↗</a></div><div class="creator-visual" aria-hidden="true"><div class="phone-mock"></div><span class="studio-caption">OPEN.<br>CREATE.<br>MAKE IT YOURS.</span></div></section>
 <section class="newsletter"><div><span class="eyebrow">A MOMENT THAT FITS YOU</span><h2>Where will your ritual take you?</h2><p>Find an edition by its visual character and the moments you love.</p></div><button class="button" id="open-finder">Find my ritual ${arrow}</button></section>`;
 }
@@ -616,6 +644,19 @@ function bindPage(){
    if(vid.id==='hero-video')heroMuted=nextMuted;
    if(vid.paused)vid.play().catch(()=>{});
    setSoundBtnState(btn,nextMuted);
+  };
+ });
+
+ // Home page Gym & ExerciseDB in-app quick modal
+ $$('[data-home-gym-open]').forEach(btn=>{
+  btn.onclick=()=>{
+   const exId=btn.dataset.homeGymOpen;
+   const ex=(window.VORALEAF_FITNESS?.exercises||[]).find(e=>e.id===exId);
+   const dlg=$('#gym-quick-dialog'), body=$('#gym-quick-dialog-body');
+   if(!ex||!dlg||!body)return;
+   body.innerHTML=`<div class="fitness-modal-head"><span class="eyebrow">${safe((ex.bodyPart||'GYM').toUpperCase())} · ${safe((ex.equipment||'EQUIPMENT').toUpperCase())}</span><button type="button" class="dialog-close" id="close-gym-quick" aria-label="Close window">×</button></div><h2>${safe(ex.name)}</h2><p class="fitness-modal-lead">${safe(ex.description||'')}</p><div class="fitness-modal-grid"><div class="fitness-modal-video-box"><video src="/assets/hero-workout.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp"></video></div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>${safe(ex.target||'Full body')}</dd></div><div><dt>Equipment</dt><dd>${safe(ex.equipment||'Gym')}</dd></div><div><dt>Body area</dt><dd>${safe(ex.bodyPart||'Movement')}</dd></div></dl>${ex.secondaryMuscles?.length?`<p class="fitness-secondary">Secondary muscles: ${ex.secondaryMuscles.map(safe).join(', ')}</p>`:''}<h3>Step-by-step gym form</h3><ol class="fitness-modal-steps">${(ex.instructions||[]).map(s=>`<li>${safe(s)}</li>`).join('')}</ol><div class="fitness-modal-actions"><a class="button" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Open in Gym Library ${arrow}</a><a class="button outline" href="/fitness" data-link>Browse all 24 exercises ${arrow}</a></div></div></div>`;
+   $('#close-gym-quick',body)?.addEventListener('click',()=>dlg.close());
+   if(!dlg.open)dlg.showModal();
   };
  });
 
