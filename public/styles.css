@@ -27,8 +27,17 @@
 @media(prefers-reduced-motion:reduce){.product-art .pack-box.pack-box-closed,.product-art .pack-box.pack-box-open{transition:none;transform:none!important}}
 
 /* VORALEAF Video Scenes, Hero Scene Navigation and Cinema Theatre */
-.hero-media{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none}
-.hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:opacity .6s ease;opacity:1}
+.hero-media{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;z-index:1}
+.hero-bg{z-index:1}
+.hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;display:block;transition:opacity .6s ease;opacity:1}
+.hero:after{z-index:2}
+.hero-copy{z-index:3}
+.hero-caption{z-index:3;right:calc(5% + 60px)}
+.video-sound-btn{position:absolute;right:14px;bottom:14px;z-index:4;width:40px;height:40px;border-radius:50%;background:rgba(16,46,37,.78);color:#f7f4ec;border:1px solid rgba(201,168,106,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:inline-grid;place-items:center;padding:0;cursor:pointer;transition:background .2s,transform .2s,border-color .2s;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.video-sound-btn:hover{background:var(--forest);border-color:var(--gold);transform:scale(1.05)}
+.video-sound-btn.is-unmuted{background:var(--gold);color:var(--deep);border-color:var(--gold)}
+.video-sound-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hero .video-sound-btn{right:5%;bottom:18px;width:44px;height:44px}
 .hero-scene-bar{position:absolute;bottom:45px;left:8%;right:8%;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:18px;background:rgba(16,46,37,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:12px 20px;border:1px solid rgba(200,178,123,.4);box-shadow:0 12px 30px rgba(0,0,0,.28);color:var(--cream);border-radius:2px}
 .hero-scene-info{display:flex;flex-direction:column;gap:2px;min-width:180px}
 .hero-scene-tag{font:9px var(--sans);letter-spacing:1.8px;color:#d8c795;text-transform:uppercase}

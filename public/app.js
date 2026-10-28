@@ -11,7 +11,12 @@ const storedBag=read('voraleaf-bag',[]),storedSaved=read('voraleaf-saved',[]);
 const main=$('#main');
 let bag=(Array.isArray(storedBag)?storedBag:[]).filter(i=>i&&products.some(p=>p.id===i.id)&&['6x15g','10x10g'].includes(i.format)&&Number.isFinite(Number(i.qty))).map(i=>({id:i.id,format:i.format,qty:Math.max(1,Math.min(99,Math.floor(Number(i.qty))))}));
 let saved=[...new Set((Array.isArray(storedSaved)?storedSaved:[]).filter(id=>articles.some(a=>a.id===id)))];
-let format='6x15g', selectedBundleBoxes=1, featuredEdition='bold', heroVideoIdx=0, filter='All', query='', timerId=null, remaining=120, deferredInstall=null, checkoutNoticeState=null;
+let format='6x15g', selectedBundleBoxes=1, featuredEdition='bold', heroVideoIdx=0, heroMuted=true, filter='All', query='', timerId=null, remaining=120, deferredInstall=null, checkoutNoticeState=null;
+const SPEAKER_MUTED_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m22 9-6 6m0-6 6 6"/></svg>';
+const SPEAKER_UNMUTED_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>';
+function soundBtnHtml(extraClass='',muted=true){
+ return `<button type="button" class="video-sound-btn ${extraClass} ${muted?'':'is-unmuted'}" data-video-mute aria-label="${muted?'Unmute video audio':'Mute video audio'}" aria-pressed="${!muted}" title="${muted?'Unmute audio':'Mute audio'}">${muted?SPEAKER_MUTED_SVG:SPEAKER_UNMUTED_SVG}</button>`;
+}
 
 const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function read(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
@@ -134,10 +139,9 @@ function mensAndWomensVideoSection(editionFilter='All'){
   <div class="editions-video-grid ${showMens&&showWomens?'two-col':'one-col'}">
    ${showMens?`<article class="edition-video-card mens-edition-card" id="mens-section">
     <div class="edition-video-stage">
-     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/bold-mens-poster.webp" aria-label="BOLD 01 Men’s Edition">
-      <source src="/assets/bold-mens.mp4" type="video/mp4">
-     </video>
      <img class="showcase-poster-fallback" src="/assets/bold-mens-poster.webp" alt="Hands opening the sealed gold inner sachet of VORALEAF BOLD 01 Men’s Edition" width="1280" height="720">
+     <video class="showcase-video" src="/assets/bold-mens.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/bold-mens-poster.webp" aria-label="BOLD 01 Men’s Edition"></video>
+     ${soundBtnHtml()}
     </div>
     <div class="edition-video-body">
      <span class="eyebrow">MEN’S EDITION · SEALED GOLD SACHET</span>
@@ -151,10 +155,9 @@ function mensAndWomensVideoSection(editionFilter='All'){
    </article>`:''}
    ${showWomens?`<article class="edition-video-card womens-edition-card" id="womens-section">
     <div class="edition-video-stage">
-     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/bloom-womens-poster.webp" aria-label="BLOOM 03 Women’s Edition">
-      <source src="/assets/bloom-womens.mp4" type="video/mp4">
-     </video>
      <img class="showcase-poster-fallback" src="/assets/bloom-womens-poster.webp" alt="Opening the rose-gold inner sachet of VORALEAF BLOOM 03 Women’s Edition" width="1280" height="720">
+     <video class="showcase-video" src="/assets/bloom-womens.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/bloom-womens-poster.webp" aria-label="BLOOM 03 Women’s Edition"></video>
+     ${soundBtnHtml()}
     </div>
     <div class="edition-video-body">
      <span class="eyebrow">WOMEN’S EDITION · ROSE-GOLD SACHET</span>
@@ -199,10 +202,9 @@ function intimateSection(){
    </div>
    <div class="intimate-campaign-media">
     <div class="intimate-video-frame">
-     <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/intimate-poster.webp" aria-label="VORALEAF shared connection">
-      <source src="/assets/intimate.mp4" type="video/mp4">
-     </video>
      <img class="showcase-poster-fallback" src="/assets/intimate-poster.webp" alt="VORALEAF shared connection and lifestyle showcase" width="1280" height="720">
+     <video class="showcase-video" src="/assets/intimate.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/intimate-poster.webp" aria-label="VORALEAF shared connection"></video>
+     ${soundBtnHtml()}
     </div>
    </div>
   </div>
@@ -212,10 +214,9 @@ function intimateSection(){
 function workoutFeatureSection(){
  return `<section class="section-shell movement-feature workout-video-feature" id="workout-area">
   <div class="workout-video-stage">
-   <video class="showcase-video" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp" aria-label="VORALEAF active movement ritual">
-    <source src="/assets/hero-workout.mp4" type="video/mp4">
-   </video>
    <img class="showcase-poster-fallback" src="/assets/hero-workout-poster.webp" alt="A couple preparing VORALEAF BOLD 01 and BLOOM 03 in a sunlit studio" width="1280" height="720">
+   <video class="showcase-video" src="/assets/hero-workout.mp4" playsinline muted loop autoplay preload="metadata" poster="/assets/hero-workout-poster.webp" aria-label="VORALEAF active movement ritual"></video>
+   ${soundBtnHtml()}
   </div>
   <div>
    <span class="eyebrow">MOVE &amp; UNWIND</span>
@@ -231,7 +232,7 @@ function workoutFeatureSection(){
 
 function home(){
  const curFilm=heroPlaylist[heroVideoIdx]||heroPlaylist[0];
- return `<section class="hero"><div class="hero-media"><video id="hero-video" class="hero-bg-video" playsinline muted autoplay preload="auto" poster="/assets/coffee-hero.webp" aria-label="VORALEAF Roots Herbal Coffee"><source src="${curFilm.src}" type="video/mp4"></video><img class="hero-bg" src="/assets/coffee-hero.webp" alt="Hands opening the VORALEAF BOLD 01 box to reveal a sealed gold sachet in warm morning light" width="1280" height="720" fetchpriority="high"></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY &amp; INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s &amp; partners’ vitality coffee to support energy, desire and intimacy in long-term love. Fuel the long-term bond with reliable stamina that lasts up to 48 hours, starting with your morning cup.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><a class="button outline light-outline" href="/about" data-link>Ingredients &amp; benefits ${arrow}</a></div></div><div class="hero-caption"><span>BOLD 01 · EMBER 02 · BLOOM 03</span><span>VORALEAF ROOTS HERBAL COFFEE · UK EDITION</span></div></section>
+ return `<section class="hero"><div class="hero-media"><img class="hero-bg" src="/assets/coffee-hero.webp" alt="Hands opening the VORALEAF BOLD 01 box to reveal a sealed gold sachet in warm morning light" width="1280" height="720" fetchpriority="high"><video id="hero-video" class="hero-bg-video" src="${curFilm.src}" playsinline ${heroMuted?'muted':''} autoplay preload="auto" poster="${curFilm.poster||'/assets/coffee-hero.webp'}" aria-label="VORALEAF Roots Herbal Coffee"></video></div><div class="hero-copy"><span class="eyebrow">ROOTS HERBAL COFFEE · 48-HOUR VITALITY &amp; INTIMACY</span><h1>Make room<br>for <em>your</em><br>moment.</h1><p class="hero-description">Men’s &amp; partners’ vitality coffee to support energy, desire and intimacy in long-term love. Fuel the long-term bond with reliable stamina that lasts up to 48 hours, starting with your morning cup.</p><div class="hero-actions"><a class="button" href="/collection" data-link>Shop the collection ${arrow}</a><a class="button outline light-outline" href="/about" data-link>Ingredients &amp; benefits ${arrow}</a></div></div>${soundBtnHtml('hero-sound-btn',heroMuted)}<div class="hero-caption"><span>BOLD 01 · EMBER 02 · BLOOM 03</span><span>VORALEAF ROOTS HERBAL COFFEE · UK EDITION</span></div></section>
 ${trustStripSection()}
 <section class="section-shell"><div class="section-head"><div><span class="eyebrow">THE COLLECTION</span><h2>Three editions. One signature vitality formula.</h2></div><a class="text-link" href="/collection" data-link>Explore all editions ↗</a></div><div class="collection-grid">${products.map(productCard).join('')}</div></section>
 ${mensAndWomensVideoSection('All')}
@@ -551,19 +552,72 @@ function bindPage(){
   };
  });
 
- // Direct 5-video infinite loop in Hero section
+ // Direct 5-video infinite loop in Hero section + speaker mute/unmute controls
+ const setSoundBtnState=(btn,isMuted)=>{
+  if(!btn)return;
+  btn.innerHTML=isMuted?SPEAKER_MUTED_SVG:SPEAKER_UNMUTED_SVG;
+  btn.classList.toggle('is-unmuted',!isMuted);
+  btn.setAttribute('aria-pressed',String(!isMuted));
+  btn.setAttribute('aria-label',isMuted?'Unmute video audio':'Mute video audio');
+  btn.title=isMuted?'Unmute audio':'Mute audio';
+ };
+
  const heroVid=$('#hero-video');
+ const heroSoundBtn=$('.hero-sound-btn');
  if(heroVid&&heroPlaylist?.length){
-  heroVid.onended=()=>{
+  heroVid.muted=heroMuted;
+  setSoundBtnState(heroSoundBtn,heroMuted);
+  heroVid.play().catch(()=>{
+   heroVid.muted=true;
+   heroMuted=true;
+   setSoundBtnState(heroSoundBtn,true);
+   heroVid.play().catch(()=>{});
+  });
+  const advanceHeroVideo=()=>{
    heroVideoIdx=(heroVideoIdx+1)%heroPlaylist.length;
-   const next=heroPlaylist[heroVideoIdx];
+   const next=heroPlaylist[heroVideoIdx]||heroPlaylist[0];
    if(!next)return;
    heroVid.poster=next.poster||'/assets/coffee-hero.webp';
    heroVid.src=next.src;
+   heroVid.muted=heroMuted;
    heroVid.load();
-   heroVid.play().catch(()=>{});
+   const p=heroVid.play();
+   if(p&&typeof p.catch==='function'){
+    p.catch(()=>{
+     heroVid.muted=true;
+     heroMuted=true;
+     setSoundBtnState(heroSoundBtn,true);
+     heroVid.play().catch(()=>{});
+    });
+   }
   };
+  heroVid.onended=advanceHeroVideo;
+  heroVid.onerror=advanceHeroVideo;
  }
+
+ $$('[data-video-mute]').forEach(btn=>{
+  btn.onclick=()=>{
+   const container=btn.closest('.hero,.edition-video-stage,.intimate-video-frame,.workout-video-stage,.fitness-hero-photo');
+   const vid=container?.querySelector('video');
+   if(!vid)return;
+   const nextMuted=!vid.muted;
+   if(!nextMuted){
+    $$('video').forEach(other=>{
+     if(other!==vid){
+      other.muted=true;
+      if(other.id==='hero-video')heroMuted=true;
+     }
+    });
+    $$('[data-video-mute]').forEach(otherBtn=>{
+     if(otherBtn!==btn)setSoundBtnState(otherBtn,true);
+    });
+   }
+   vid.muted=nextMuted;
+   if(vid.id==='hero-video')heroMuted=nextMuted;
+   if(vid.paused)vid.play().catch(()=>{});
+   setSoundBtnState(btn,nextMuted);
+  };
+ });
 
  const timerVid=$('#timer-bg-video');
  const timerVisCheck=$('#timer-visual-toggle');
