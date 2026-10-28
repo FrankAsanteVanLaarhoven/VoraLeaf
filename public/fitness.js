@@ -24,22 +24,23 @@
   }
   function inferMotion(name, bodyPart, equipment) {
     var s = (String(name || '') + ' ' + String(bodyPart || '') + ' ' + String(equipment || '')).toLowerCase();
+    if (/split squat|lunge/.test(s)) return 'split-squat';
+    if (/hip thrust|glute bridge/.test(s)) return 'hip-thrust';
     if (/bench|chest fly|incline/.test(s)) return 'bench-press';
-    if (/squat|split/.test(s)) return 'squat';
-    if (/deadlift|hip thrust/.test(s)) return 'deadlift';
-    if (/pulldown|pull-up|chin/.test(s)) return 'lat-pulldown';
-    if (/shoulder|overhead|shrug/.test(s)) return 'shoulder-press';
-    if (/row/.test(s)) return 'cable-row';
+    if (/squat|leg press|sled/.test(s)) return 'squat';
+    if (/deadlift|calf|ankle/.test(s)) return 'deadlift';
+    if (/pulldown|pull-up|chin|row|face pull|band/.test(s)) return 'lat-pulldown';
+    if (/shoulder|overhead|shrug|lateral raise/.test(s)) return 'shoulder-press';
     if (/swing|kettlebell|cardio/.test(s)) return 'kettlebell-swing';
-    if (/leg press|sled/.test(s)) return 'leg-press';
-    if (/triceps|pushdown/.test(s)) return 'triceps-pushdown';
-    if (/face pull|band/.test(s)) return 'face-pull';
-    if (/wrist|forearm/.test(s)) return 'wrist-curl';
+    if (/push-up|press-up|triceps|pushdown/.test(s)) return 'push-up';
     if (/plank|twist|waist|abs/.test(s)) return 'plank';
-    if (/biceps|curl/.test(s)) return 'biceps-curl';
-    if (/push-up|press-up/.test(s)) return 'push-up';
-    if (/calf|ankle/.test(s)) return 'calf-raise';
+    if (/biceps|curl|wrist|forearm/.test(s)) return 'biceps-curl';
     return 'squat';
+  }
+  function resolveMediaKey(motion, name) {
+    var valid = ['bench-press', 'squat', 'deadlift', 'lat-pulldown', 'shoulder-press', 'kettlebell-swing', 'push-up', 'plank', 'biceps-curl', 'hip-thrust', 'split-squat'];
+    if (valid.includes(motion)) return motion;
+    return inferMotion(name, '', '');
   }
   function attribution() { return cleanText((window.VORALEAF_FITNESS || {}).sourceAttribution, 600) || 'Exercise schema, muscle targeting and biomechanics powered by ExerciseDB (exercisedb.p.rapidapi.com).'; }
   function seed() { var data = window.VORALEAF_FITNESS || []; return (Array.isArray(data) ? data : data.exercises || []).map(normalise).filter(Boolean); }
@@ -107,15 +108,15 @@
   function visual(exercise) {
     var dbId = exercise.exerciseDbId || '0025';
     var motion = exercise.motion || inferMotion(exercise.name, exercise.bodyPart, exercise.equipment);
-    return '<div class="fitness-exercise-art fitness-db-stage" data-db-stage>' +
-      '<svg class="fitness-db-svg" viewBox="0 0 320 220" fill="none" role="img" aria-label="' + esc('Animated ExerciseDB movement demonstration for ' + exercise.name) + '">' +
-      '<defs><pattern id="db-grid-' + esc(exercise.id) + '" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(24,62,50,0.08)" stroke-width="1"/></pattern></defs>' +
-      '<rect width="320" height="220" fill="url(#db-grid-' + esc(exercise.id) + ')"/>' +
-      dbRigScene(motion) +
-      '</svg>' +
+    var mediaKey = resolveMediaKey(motion, exercise.name);
+    var videoSrc = '/assets/exercises/' + encodeURIComponent(mediaKey) + '.mp4';
+    var sheetSrc = '/assets/exercises/' + encodeURIComponent(mediaKey) + '.jpg';
+    return '<div class="fitness-exercise-art fitness-db-stage fitness-human-stage" data-db-stage>' +
+      '<video class="fitness-human-video" src="' + esc(videoSrc) + '" poster="' + esc(sheetSrc) + '" playsinline muted loop autoplay preload="metadata" aria-label="' + esc(exercise.name + ' human athlete demonstration') + '"></video>' +
+      '<img class="fitness-human-sheet" src="' + esc(sheetSrc) + '" alt="' + esc(exercise.name + ' start and peak contraction form') + '" loading="lazy">' +
       (exercise.image ? '<img class="fitness-provider-image" src="' + esc(exercise.image) + '" alt="' + esc(exercise.name + ' ExerciseDB demonstration') + '" loading="lazy" referrerpolicy="no-referrer">' : '') +
       '<span class="fitness-db-id-pill">EXERCISEDB #' + esc(dbId) + '</span>' +
-      '<span class="fitness-art-label">● LIVE EXERCISEDB MOTION · ' + esc((exercise.target || 'STRENGTH').toUpperCase()) + '</span>' +
+      '<span class="fitness-art-label">● LIVE ATHLETE DEMO · ' + esc((exercise.target || 'STRENGTH').toUpperCase()) + '</span>' +
       '</div>';
   }
   function exerciseCard(exercise, session) {
@@ -204,6 +205,7 @@
         '<button type="button" class="fitness-db-ctrl" data-fitness-action="db-speed" data-speed="slow">0.5× Slow form</button>' +
         '<button type="button" class="fitness-db-ctrl is-active" data-fitness-action="db-speed" data-speed="normal">1.0× Standard</button>' +
         '<button type="button" class="fitness-db-ctrl" data-fitness-action="db-speed" data-speed="fast">1.5× Tempo</button>' +
+        '<button type="button" class="fitness-db-ctrl" data-fitness-action="db-sheet-toggle" aria-pressed="false">2-Phase Form</button>' +
         '</div>';
     }
     function localResults() { var search = catalogState.search.toLowerCase(); return seed().filter(function (e) { return (!catalogState.bodyPart || e.bodyPart === catalogState.bodyPart) && (!catalogState.equipment || e.equipment === catalogState.equipment) && (!search || [e.name, e.bodyPart, e.target, e.equipment].join(' ').toLowerCase().includes(search)); }); }
@@ -280,6 +282,7 @@
       if (!alive || !q('videos')) return;
       q('videos').innerHTML = videosMarkup(exercise);
       q('videos').querySelectorAll('.is-slow-stage .fitness-exercise-art').forEach(function (art) { art.classList.add('speed-slow'); });
+      q('videos').querySelectorAll('.is-slow-stage .fitness-human-video').forEach(function (v) { v.playbackRate = 0.5; });
       attachImageFallback();
     }
     function sessionMarkup() {
@@ -309,21 +312,44 @@
       else if (action === 'db-play-toggle') {
         var scope = button.closest('.fitness-modal-visual, .fitness-detail-player-col') || page;
         var artNode = scope.querySelector('.fitness-exercise-art');
+        var vid = scope.querySelector('.fitness-human-video');
         if (!artNode) return;
-        var paused = artNode.classList.toggle('is-paused');
+        var paused;
+        if (vid) {
+          if (vid.paused) { vid.play().catch(function(){}); paused = false; }
+          else { vid.pause(); paused = true; }
+        } else {
+          paused = artNode.classList.toggle('is-paused');
+        }
         button.textContent = paused ? '▶ Play rep loop' : '⏸ Pause rep loop';
         button.setAttribute('aria-pressed', String(paused));
         button.classList.toggle('is-active', !paused);
       } else if (action === 'db-speed') {
         var speedScope = button.closest('.fitness-modal-visual, .fitness-detail-player-col') || page;
         var speedArt = speedScope.querySelector('.fitness-exercise-art');
+        var speedVid = speedScope.querySelector('.fitness-human-video');
         if (!speedArt) return;
+        var rate = 1.0;
+        if (button.dataset.speed === 'slow') rate = 0.5;
+        else if (button.dataset.speed === 'fast') rate = 1.5;
+        if (speedVid) {
+          speedVid.playbackRate = rate;
+          if (speedVid.paused) speedVid.play().catch(function(){});
+        }
         speedArt.classList.remove('speed-slow', 'speed-fast', 'is-paused');
         if (button.dataset.speed === 'slow') speedArt.classList.add('speed-slow');
         else if (button.dataset.speed === 'fast') speedArt.classList.add('speed-fast');
         speedScope.querySelectorAll('[data-fitness-action="db-speed"]').forEach(function (b) { b.classList.toggle('is-active', b === button); });
         var playBtn = speedScope.querySelector('[data-fitness-action="db-play-toggle"]');
         if (playBtn) { playBtn.textContent = '⏸ Pause rep loop'; playBtn.setAttribute('aria-pressed', 'false'); playBtn.classList.add('is-active'); }
+      } else if (action === 'db-sheet-toggle') {
+        var sheetScope = button.closest('.fitness-modal-visual, .fitness-detail-player-col') || page;
+        var sheetArt = sheetScope.querySelector('.fitness-exercise-art');
+        if (!sheetArt) return;
+        var showing = sheetArt.classList.toggle('show-sheet');
+        button.textContent = showing ? 'Video Loop' : '2-Phase Form';
+        button.setAttribute('aria-pressed', String(showing));
+        button.classList.toggle('is-active', showing);
       } else if (action === 'area') { q('filter-form').elements.bodyPart.value = button.dataset.value; readFilters(); }
       else if (action === 'equip') { q('filter-form').elements.equipment.value = button.dataset.value; readFilters(); }
       else if (action === 'clear-filters') { q('filter-form').reset(); q('filter-form').elements.search.value = ''; q('filter-form').elements.bodyPart.value = ''; q('filter-form').elements.equipment.value = ''; readFilters(); }

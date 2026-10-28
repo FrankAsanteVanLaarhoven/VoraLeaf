@@ -658,14 +658,22 @@ function bindPage(){
    const dlg=$('#gym-quick-dialog'), body=$('#gym-quick-dialog-body');
    if(!ex||!dlg||!body)return;
    const visHtml=window.VoraleafFitness?.renderVisual?window.VoraleafFitness.renderVisual(ex):'';
-   body.innerHTML=`<div class="fitness-modal-head"><span class="eyebrow">${safe((ex.bodyPart||'GYM').toUpperCase())} · ${safe((ex.equipment||'EQUIPMENT').toUpperCase())} · EXERCISEDB #${safe(ex.exerciseDbId||'0025')}</span><button type="button" class="dialog-close" id="close-gym-quick" aria-label="Close window">×</button></div><h2>${safe(ex.name)}</h2><p class="fitness-modal-lead">${safe(ex.description||'')}</p><div class="fitness-modal-grid"><div class="fitness-modal-visual">${visHtml}<div class="fitness-db-controls" role="group" aria-label="ExerciseDB motion playback controls"><button type="button" class="fitness-db-ctrl is-active" data-home-db-toggle aria-pressed="false">⏸ Pause rep loop</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="slow">0.5× Slow form</button><button type="button" class="fitness-db-ctrl is-active" data-home-db-speed="normal">1.0× Standard</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="fast">1.5× Tempo</button></div></div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>${safe(ex.target||'Full body')}</dd></div><div><dt>Equipment</dt><dd>${safe(ex.equipment||'Gym')}</dd></div><div><dt>ExerciseDB ID</dt><dd>#${safe(ex.exerciseDbId||'0025')}</dd></div></dl>${ex.secondaryMuscles?.length?`<p class="fitness-secondary">Secondary muscles: ${ex.secondaryMuscles.map(safe).join(', ')}</p>`:''}<h3>ExerciseDB step-by-step form</h3><ol class="fitness-modal-steps">${(ex.instructions||[]).map(s=>`<li>${safe(s)}</li>`).join('')}</ol><div class="fitness-modal-actions"><a class="button" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Open in Gym Library ${arrow}</a><a class="button outline" href="/fitness" data-link>Browse all 24 exercises ${arrow}</a></div></div></div>`;
+   body.innerHTML=`<div class="fitness-modal-head"><span class="eyebrow">${safe((ex.bodyPart||'GYM').toUpperCase())} · ${safe((ex.equipment||'EQUIPMENT').toUpperCase())} · EXERCISEDB #${safe(ex.exerciseDbId||'0025')}</span><button type="button" class="dialog-close" id="close-gym-quick" aria-label="Close window">×</button></div><h2>${safe(ex.name)}</h2><p class="fitness-modal-lead">${safe(ex.description||'')}</p><div class="fitness-modal-grid"><div class="fitness-modal-visual">${visHtml}<div class="fitness-db-controls" role="group" aria-label="ExerciseDB motion playback controls"><button type="button" class="fitness-db-ctrl is-active" data-home-db-toggle aria-pressed="false">⏸ Pause rep loop</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="slow">0.5× Slow form</button><button type="button" class="fitness-db-ctrl is-active" data-home-db-speed="normal">1.0× Standard</button><button type="button" class="fitness-db-ctrl" data-home-db-speed="fast">1.5× Tempo</button><button type="button" class="fitness-db-ctrl" data-home-db-sheet aria-pressed="false">2-Phase Form</button></div></div><div><dl class="fitness-attributes"><div><dt>Primary focus</dt><dd>${safe(ex.target||'Full body')}</dd></div><div><dt>Equipment</dt><dd>${safe(ex.equipment||'Gym')}</dd></div><div><dt>ExerciseDB ID</dt><dd>#${safe(ex.exerciseDbId||'0025')}</dd></div></dl>${ex.secondaryMuscles?.length?`<p class="fitness-secondary">Secondary muscles: ${ex.secondaryMuscles.map(safe).join(', ')}</p>`:''}<h3>ExerciseDB step-by-step form</h3><ol class="fitness-modal-steps">${(ex.instructions||[]).map(s=>`<li>${safe(s)}</li>`).join('')}</ol><div class="fitness-modal-actions"><a class="button" href="/fitness/${encodeURIComponent(ex.id)}" data-link>Open in Gym Library ${arrow}</a><a class="button outline" href="/fitness" data-link>Browse all 24 exercises ${arrow}</a></div></div></div>`;
    $$('.fitness-provider-image',body).forEach(img=>{img.onerror=()=>{img.hidden=true;};});
    $('#close-gym-quick',body)?.addEventListener('click',()=>dlg.close());
    const art=$('.fitness-exercise-art',body);
+   const humanVid=$('.fitness-human-video',body);
    const toggleBtn=$('[data-home-db-toggle]',body);
+   const sheetBtn=$('[data-home-db-sheet]',body);
    toggleBtn?.addEventListener('click',()=>{
     if(!art)return;
-    const paused=art.classList.toggle('is-paused');
+    let paused;
+    if(humanVid){
+     if(humanVid.paused){humanVid.play().catch(()=>{});paused=false;}
+     else{humanVid.pause();paused=true;}
+    }else{
+     paused=art.classList.toggle('is-paused');
+    }
     toggleBtn.textContent=paused?'▶ Play rep loop':'⏸ Pause rep loop';
     toggleBtn.setAttribute('aria-pressed',String(paused));
     toggleBtn.classList.toggle('is-active',!paused);
@@ -673,12 +681,21 @@ function bindPage(){
    $$('[data-home-db-speed]',body).forEach(sBtn=>{
     sBtn.addEventListener('click',()=>{
      if(!art)return;
+     const rate=sBtn.dataset.homeDbSpeed==='slow'?0.5:(sBtn.dataset.homeDbSpeed==='fast'?1.5:1.0);
+     if(humanVid){humanVid.playbackRate=rate;if(humanVid.paused)humanVid.play().catch(()=>{});}
      art.classList.remove('speed-slow','speed-fast','is-paused');
      if(sBtn.dataset.homeDbSpeed==='slow')art.classList.add('speed-slow');
      else if(sBtn.dataset.homeDbSpeed==='fast')art.classList.add('speed-fast');
      $$('[data-home-db-speed]',body).forEach(b=>b.classList.toggle('is-active',b===sBtn));
      if(toggleBtn){toggleBtn.textContent='⏸ Pause rep loop';toggleBtn.setAttribute('aria-pressed','false');toggleBtn.classList.add('is-active');}
     });
+   });
+   sheetBtn?.addEventListener('click',()=>{
+    if(!art)return;
+    const showing=art.classList.toggle('show-sheet');
+    sheetBtn.textContent=showing?'Video Loop':'2-Phase Form';
+    sheetBtn.setAttribute('aria-pressed',String(showing));
+    sheetBtn.classList.toggle('is-active',showing);
    });
    if(!dlg.open)dlg.showModal();
   };
